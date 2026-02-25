@@ -11,7 +11,7 @@ if (!countElement || !incrementButton) {
   }
 
   function handleIncrement() {
-    count += 1;
+    count += 2;
     renderCount();
   }
 

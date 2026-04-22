@@ -415,15 +415,17 @@
             const title = document.getElementById("____");
             const button = document.getElementById("____");
 
-            button.addEventListener("____", () => {
+            function handleClick() {
               title.style.____ = "____";
-            });
+            }
+
+            button.addEventListener("____", handleClick);
             ```
 
-            <span class="sub">穴は自分で埋める。`() => { ... }` は「矢印 = function の略記」くらいでまず動かす（詳しくは第3回）。</span>
+            <span class="sub">穴は自分で埋める。`main.js` のテンプレと同じ並び（関数を定義 → 予約する）。</span>
 
             Note:
-            このスライドは詰まった子が出たタイミングでだけ映す。最初から映すと考えなくなる。穴埋め形式にしているのは、骨格だけ見せて手を動かさせるため。アロー関数 `() => { ... }` はこれが初見の子もいる。「矢印は function と思ってくれれば OK」と口頭で流す（詳細は第3回）。
+            このスライドは詰まった子が出たタイミングでだけ映す。最初から映すと考えなくなる。穴埋め形式にしているのは、骨格だけ見せて手を動かさせるため。`main.js` の TODO 3（handleClick 関数）と TODO 4（addEventListener の予約）に 1 対 1 で対応しているので、生徒がテンプレを追いやすい。
           </textarea>
         </section>
 
@@ -473,7 +475,7 @@
             handleInput();
             ```
 
-            <span class="sub">骨だけ。中身は自分で書く。`() =>` を使う書き方は「矢印 = function の略記」（第3回で詳しく）。</span>
+            <span class="sub">骨だけ。中身は自分で書く。最後の 1 行（`handleInput()` 呼び出し）を忘れないこと。</span>
 
             Note:
             この問題は「`.value` vs `.innerText` をちゃんと分けて使えるか」が唯一のハマりどころ。`"input"` イベント名も初見なので、「`change` は選び直したとき、`input` は 1 文字ごと」と口頭で一言添える。main.js の TODO 5（初回呼び出し）と揃えてあるので、空表示の挙動をちゃんと出させる。
@@ -519,11 +521,13 @@
             2. ラジオ全部に `change` イベントを付ける:
                ```js
                const radios = document.querySelectorAll('input[name="time"]');
-               radios.forEach((r) => r.addEventListener("change", update));
+               radios.forEach((radio) => {
+                 radio.addEventListener("change", updateGreeting);
+               });
                ```
             3. 値 → 文言の分岐は `if / else if / else` で
 
-            <span class="sub">`(r) => r.addEventListener(...)` の `=>` は「function の略記」くらいの理解で OK（第3回で詳しく）。</span>
+            <span class="sub">`(radio) => { ... }` の `=>` は「function の略記」くらいの理解で OK（第3回で詳しく）。関数名 `updateGreeting` は `main.js` の TODO 4 と揃えてある。</span>
 
             Note:
             `querySelectorAll` が返すのは NodeList で配列っぽいもの、くらいの説明で止める。`forEach` は Arduino の `for (int i=0; i<N; i++)` と同じ発想で通じる。余裕があれば「10 個になったら if の山で読みにくいよね？ 次回やる」と次回予告をここで一言。

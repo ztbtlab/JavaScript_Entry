@@ -26,3 +26,10 @@
 ## ライセンス
 
 - 現時点: **検討中**
+
+## 第2回 Web 版（授業用）
+
+- GitHub Pages: <https://ztbtlab.github.io/JavaScript_Entry/lessons/lesson-02/>
+- ハブから 3 つの練習（ボタンで文字色を変える / 入力を大文字に変換 / ラジオで挨拶切替）へリンク
+- `main.js` は穴あき（TODO）、`answer.js` は講師用の完成版
+- 生徒は `answer.js` を直接開かないこと（講師許可のもと、詰まった場合のみ参照）

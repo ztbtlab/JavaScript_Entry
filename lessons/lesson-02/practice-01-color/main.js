@@ -12,19 +12,28 @@
 //  - 文字色は 要素.style.color = "red"
 
 // TODO 1: 見出し要素を取ってくる（id は "title"）
-const title = null;
+const title = document.getElementById("title");
 
 // TODO 2: ボタン要素を取ってくる（id は "change-color"）
-const button = null;
+const button = document.getElementById("change-color");
 
 // 取れたかどうか Console で確認する（これはヒント用、消してよい）
 console.log("title:", title);
 console.log("button:", button);
 
+button.addEventListener("click", handleClick);
+
 // TODO 3: クリックされたときに呼ばれる関数を作る
 //         中で title の文字色を "red" に変える
 function handleClick() {
-  // ここを書く
+  console.log("押された！");
+  console.log(title.style.color);
+  if(title.style.coler == "red"){
+    title.style.color = "black";
+    console.log("red if");
+  }else{
+    title.style.color = "red";
+  }
 }
 
 // TODO 4: ボタンに「クリックされたら handleClick を呼んでね」と予約する

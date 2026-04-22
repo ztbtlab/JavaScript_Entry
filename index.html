@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Entry - 中学生向け 1 年講座</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: #f7f7f7;
+        color: #222;
+        margin: 0;
+        padding: 2rem 1rem;
+        line-height: 1.7;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 1.5rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        border-bottom: 3px solid #2b6cb0;
+        padding-bottom: 0.3rem;
+        margin-bottom: 0.3rem;
+      }
+      h2 {
+        margin-top: 2rem;
+        color: #2b6cb0;
+      }
+      p.lead {
+        color: #555;
+      }
+      .lesson {
+        border: 1px solid #e2e2e2;
+        border-radius: 6px;
+        padding: 0.8rem 1rem;
+        margin-bottom: 0.6rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.6rem;
+      }
+      .lesson .num {
+        color: #2b6cb0;
+        font-weight: 700;
+        min-width: 4rem;
+      }
+      .lesson .title {
+        flex: 1 1 60%;
+      }
+      .status {
+        font-size: 0.78rem;
+        padding: 0.12rem 0.55rem;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .status.done {
+        background: #d7f2e5;
+        color: #0f6b3e;
+      }
+      .status.current {
+        background: #e6f0fb;
+        color: #1a4b80;
+      }
+      .status.planned {
+        background: #eee;
+        color: #666;
+      }
+      .lesson .links {
+        flex-basis: 100%;
+        padding-left: 4.6rem;
+        font-size: 0.92rem;
+      }
+      a {
+        color: #2b6cb0;
+      }
+      code {
+        background: #eef2f7;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.95em;
+      }
+      footer {
+        max-width: 760px;
+        margin: 1rem auto 0;
+        color: #888;
+        font-size: 0.85rem;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>JavaScript Entry</h1>
+      <p class="lead">中学生向け エンジニア入門講座（全 10 回 + 自主学習 / 1 年）</p>
+      <p>
+        対象: 中学 2 年生（Arduino 経験あり）。
+        <code>if</code> / <code>for</code> / 変数・関数は既習。
+        ゴール: JavaScript の基礎から Node.js・Next.js・AI を使った開発までを体験する。
+      </p>
+
+      <h2>授業一覧</h2>
+
+      <div class="lesson">
+        <span class="num">第 1 回</span>
+        <span class="title">JS 構文基礎 + ローカル Git リポジトリ</span>
+        <span class="status done">実施済</span>
+      </div>
+
+      <div class="lesson">
+        <span class="num">第 2 回</span>
+        <span class="title">ブラウザで動かす（DOM とイベント）</span>
+        <span class="status current">公開中</span>
+        <div class="links">
+          <a href="./lessons/lesson-02/">ハブページ</a>
+          ／ 練習:
+          <a href="./lessons/lesson-02/practice-01-color/">色変え</a>・
+          <a href="./lessons/lesson-02/practice-02-uppercase/">大文字変換</a>・
+          <a href="./lessons/lesson-02/practice-03-greeting/">挨拶切替</a>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <span class="num">第 3 回</span>
+        <span class="title">関数で整理する</span>
+        <span class="status planned">予定</span>
+      </div>
+      <div class="lesson">
+        <span class="num">第 4 回</span>
+        <span class="title">状態を持つ UI</span>
+        <span class="status planned">予定</span>
+      </div>
+      <div class="lesson">
+        <span class="num">第 5 回</span>
+        <span class="title">モジュール分割と Pull Request</span>
+        <span class="status planned">予定</span>
+      </div>
+      <div class="lesson">
+        <span class="num">第 6 回</span>
+        <span class="title">Node.js 入門（Arduino ログを処理）</span>
+        <span class="status planned">予定</span>
+      </div>
+      <div class="lesson">
+        <span class="num">第 7 回</span>
+        <span class="title">Web の仕組みと外部 API</span>
+        <span class="status planned">予定</span>
+      </div>
+      <div class="lesson">
+        <span class="num">第 8 回</span>
+        <span class="title">Next.js 体験</span>
+        <span class="status planned">予定</span>
+      </div>
+      <div class="lesson">
+        <span class="num">第 9 回</span>
+        <span class="title">AI で加速する</span>
+        <span class="status planned">予定</span>
+      </div>
+      <div class="lesson">
+        <span class="num">第 10 回</span>
+        <span class="title">最終制作発表</span>
+        <span class="status planned">予定</span>
+      </div>
+
+      <h2>関連リンク</h2>
+      <ul>
+        <li>
+          <a href="https://github.com/ztbtlab/JavaScript_Entry">GitHub リポジトリ</a>
+          （課題 Issue / 回答ブランチはこちら）
+        </li>
+        <li>
+          <a href="https://github.com/ztbtlab/JavaScript_Entry/blob/main/CURRICULUM_DESIGN.md">CURRICULUM_DESIGN.md</a>
+          （講座の設計メモ）
+        </li>
+        <li>
+          <a href="https://github.com/ztbtlab/JavaScript_Entry/blob/main/docs/%E6%95%99%E6%9D%90%E3%83%AA%E3%83%B3%E3%82%AF.md">教材リンク集</a>
+          （Code.org / JavaScript.info / MDN）
+        </li>
+      </ul>
+
+      <p>
+        次の授業が近づいたら、このページに新しい回のリンクが追加されます。
+        うまく表示されないときは、いちどページを再読み込みしてみてください。
+      </p>
+    </main>
+    <footer>最終更新: 2026-04-22</footer>
+  </body>
+</html>

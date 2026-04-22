@@ -33,7 +33,15 @@
       p.lead {
         color: #555;
       }
+      ul.lessons {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
       .lesson {
+        /* レイアウト計算の基準値。ここを変えれば .links の padding も連動する */
+        --lesson-num-width: 4rem;
+        --lesson-gap: 0.6rem;
         border: 1px solid #e2e2e2;
         border-radius: 6px;
         padding: 0.8rem 1rem;
@@ -41,12 +49,12 @@
         display: flex;
         flex-wrap: wrap;
         align-items: baseline;
-        gap: 0.6rem;
+        gap: var(--lesson-gap);
       }
       .lesson .num {
         color: #2b6cb0;
         font-weight: 700;
-        min-width: 4rem;
+        min-width: var(--lesson-num-width);
       }
       .lesson .title {
         flex: 1 1 60%;
@@ -71,7 +79,7 @@
       }
       .lesson .links {
         flex-basis: 100%;
-        padding-left: 4.6rem;
+        padding-left: calc(var(--lesson-num-width) + var(--lesson-gap));
         font-size: 0.92rem;
       }
       a {
@@ -104,65 +112,67 @@
 
       <h2>授業一覧</h2>
 
-      <div class="lesson">
-        <span class="num">第 1 回</span>
-        <span class="title">JS 構文基礎 + ローカル Git リポジトリ</span>
-        <span class="status done">実施済</span>
-      </div>
+      <ul class="lessons" aria-label="授業一覧">
+        <li class="lesson">
+          <span class="num">第 1 回</span>
+          <span class="title">JS 構文基礎 + ローカル Git リポジトリ</span>
+          <span class="status done">実施済</span>
+        </li>
 
-      <div class="lesson">
-        <span class="num">第 2 回</span>
-        <span class="title">ブラウザで動かす（DOM とイベント）</span>
-        <span class="status current">公開中</span>
-        <div class="links">
-          <a href="./lessons/lesson-02/">ハブページ</a>
-          ／ 練習:
-          <a href="./lessons/lesson-02/practice-01-color/">色変え</a>・
-          <a href="./lessons/lesson-02/practice-02-uppercase/">大文字変換</a>・
-          <a href="./lessons/lesson-02/practice-03-greeting/">挨拶切替</a>
-        </div>
-      </div>
+        <li class="lesson">
+          <span class="num">第 2 回</span>
+          <span class="title">ブラウザで動かす（DOM とイベント）</span>
+          <span class="status current">公開中</span>
+          <div class="links">
+            <a href="./lessons/lesson-02/">ハブページ</a>
+            ／ 練習:
+            <a href="./lessons/lesson-02/practice-01-color/">色変え</a>・
+            <a href="./lessons/lesson-02/practice-02-uppercase/">大文字変換</a>・
+            <a href="./lessons/lesson-02/practice-03-greeting/">挨拶切替</a>
+          </div>
+        </li>
 
-      <div class="lesson">
-        <span class="num">第 3 回</span>
-        <span class="title">関数で整理する</span>
-        <span class="status planned">予定</span>
-      </div>
-      <div class="lesson">
-        <span class="num">第 4 回</span>
-        <span class="title">状態を持つ UI</span>
-        <span class="status planned">予定</span>
-      </div>
-      <div class="lesson">
-        <span class="num">第 5 回</span>
-        <span class="title">モジュール分割と Pull Request</span>
-        <span class="status planned">予定</span>
-      </div>
-      <div class="lesson">
-        <span class="num">第 6 回</span>
-        <span class="title">Node.js 入門（Arduino ログを処理）</span>
-        <span class="status planned">予定</span>
-      </div>
-      <div class="lesson">
-        <span class="num">第 7 回</span>
-        <span class="title">Web の仕組みと外部 API</span>
-        <span class="status planned">予定</span>
-      </div>
-      <div class="lesson">
-        <span class="num">第 8 回</span>
-        <span class="title">Next.js 体験</span>
-        <span class="status planned">予定</span>
-      </div>
-      <div class="lesson">
-        <span class="num">第 9 回</span>
-        <span class="title">AI で加速する</span>
-        <span class="status planned">予定</span>
-      </div>
-      <div class="lesson">
-        <span class="num">第 10 回</span>
-        <span class="title">最終制作発表</span>
-        <span class="status planned">予定</span>
-      </div>
+        <li class="lesson">
+          <span class="num">第 3 回</span>
+          <span class="title">関数で整理する</span>
+          <span class="status planned">予定</span>
+        </li>
+        <li class="lesson">
+          <span class="num">第 4 回</span>
+          <span class="title">状態を持つ UI</span>
+          <span class="status planned">予定</span>
+        </li>
+        <li class="lesson">
+          <span class="num">第 5 回</span>
+          <span class="title">モジュール分割と Pull Request</span>
+          <span class="status planned">予定</span>
+        </li>
+        <li class="lesson">
+          <span class="num">第 6 回</span>
+          <span class="title">Node.js 入門（Arduino ログを処理）</span>
+          <span class="status planned">予定</span>
+        </li>
+        <li class="lesson">
+          <span class="num">第 7 回</span>
+          <span class="title">Web の仕組みと外部 API</span>
+          <span class="status planned">予定</span>
+        </li>
+        <li class="lesson">
+          <span class="num">第 8 回</span>
+          <span class="title">Next.js 体験</span>
+          <span class="status planned">予定</span>
+        </li>
+        <li class="lesson">
+          <span class="num">第 9 回</span>
+          <span class="title">AI で加速する</span>
+          <span class="status planned">予定</span>
+        </li>
+        <li class="lesson">
+          <span class="num">第 10 回</span>
+          <span class="title">最終制作発表</span>
+          <span class="status planned">予定</span>
+        </li>
+      </ul>
 
       <h2>関連リンク</h2>
       <ul>

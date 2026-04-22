@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第2回 ブラウザで動かす（DOM とイベント）</title>
+
+    <!-- Reveal.js core + theme (white) + highlight (monokai) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/white.css" id="theme" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/monokai.css" id="highlight-theme" />
+
+    <style>
+      :root {
+        /* 後列からも見える字サイズを CSS 変数で統一 */
+        --base-font-size: 30px;
+        --title-scale: 1.8;
+        --title-slide-scale: 2.2;
+        --h1-size: calc(var(--base-font-size) * var(--title-scale));
+        --h2-size: calc(var(--base-font-size) * 1.4);
+        --h3-size: calc(var(--base-font-size) * 1.15);
+        --code-size: calc(var(--base-font-size) * 0.9);
+        --small-size: calc(var(--base-font-size) * 0.75);
+        --accent: #c0392b;
+        --accent-weak: #f6ece9;
+        --ink: #222;
+        --sub-ink: #555;
+        --rule: #ddd;
+        --section-gap: calc(var(--base-font-size) * 0.6);
+        --list-gap: calc(var(--section-gap) / 2);
+      }
+
+      .reveal,
+      .reveal .slides,
+      .reveal .slides section,
+      .reveal p,
+      .reveal li,
+      .reveal td,
+      .reveal th {
+        font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+        color: var(--ink);
+      }
+
+      .reveal .slides {
+        font-size: var(--base-font-size);
+        text-align: left;
+      }
+
+      .reveal h1 {
+        font-size: var(--h1-size);
+        line-height: 1.25;
+        margin-bottom: var(--section-gap);
+        color: var(--ink);
+        text-transform: none;
+      }
+
+      .reveal h2 {
+        font-size: var(--h2-size);
+        line-height: 1.25;
+        margin-bottom: var(--section-gap);
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: calc(var(--section-gap) / 2);
+        text-transform: none;
+      }
+
+      .reveal h3 {
+        font-size: var(--h3-size);
+        line-height: 1.3;
+        text-transform: none;
+      }
+
+      .reveal p,
+      .reveal li {
+        line-height: 1.5;
+      }
+
+      .reveal ul,
+      .reveal ol {
+        display: block;
+        margin-left: calc(var(--base-font-size) * 1.2);
+      }
+
+      .reveal li + li {
+        margin-top: var(--list-gap);
+      }
+
+      .reveal code {
+        font-size: var(--code-size);
+        background: var(--accent-weak);
+        color: var(--accent);
+        padding: 0 calc(var(--code-size) * 0.25);
+        border-radius: 4px;
+      }
+
+      .reveal pre {
+        width: 100%;
+        box-shadow: none;
+        font-size: var(--code-size);
+      }
+
+      .reveal pre code {
+        background: #272822;
+        color: #f8f8f2;
+        padding: calc(var(--code-size) * 0.8);
+        border-radius: 6px;
+        max-height: none;
+      }
+
+      .reveal table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: calc(var(--base-font-size) * 0.85);
+      }
+
+      .reveal table th,
+      .reveal table td {
+        border: 1px solid var(--rule);
+        padding: calc(var(--base-font-size) * 0.35) calc(var(--base-font-size) * 0.5);
+        vertical-align: top;
+      }
+
+      .reveal table th {
+        background: var(--accent-weak);
+        color: var(--accent);
+      }
+
+      .reveal a {
+        color: var(--accent);
+        text-decoration: underline;
+      }
+
+      .reveal .slides section.title-slide h1 {
+        font-size: calc(var(--base-font-size) * var(--title-slide-scale));
+        border: none;
+      }
+
+      .reveal .slides section.title-slide {
+        text-align: center;
+      }
+
+      .reveal .slides section.title-slide ul {
+        display: inline-block;
+        text-align: left;
+      }
+
+      .sub {
+        color: var(--sub-ink);
+        font-size: var(--small-size);
+      }
+
+      .reveal ul.tags {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(var(--base-font-size) * 0.3);
+        margin-top: var(--section-gap);
+      }
+
+      .reveal ul.tags li {
+        background: var(--accent-weak);
+        color: var(--accent);
+        padding: 0 calc(var(--base-font-size) * 0.4);
+        border-radius: 4px;
+        font-size: var(--small-size);
+        margin-top: 0;
+      }
+
+      .spacer {
+        display: block;
+        height: var(--section-gap);
+      }
+
+      .reveal blockquote {
+        width: 100%;
+        background: var(--accent-weak);
+        border-left: 6px solid var(--accent);
+        padding: calc(var(--base-font-size) * 0.5) calc(var(--base-font-size) * 0.8);
+        font-style: normal;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- 1. 表紙 -->
+        <section data-markdown class="title-slide">
+          <textarea data-template>
+            # 第2回 ブラウザで動かす
+            ## DOM とイベント
+
+            - 所要時間: **2 時間**
+            - 今日の練習: **3 問**
+            - 対象: 中2（Arduino 経験あり）
+
+            Note:
+            今日から画面に触る回。JS がブラウザで動くとはどういうことかを、言葉より先に手で分からせる。まず表紙で「今日は 2 時間で 3 問解けば OK」の気楽さを伝える。緊張している子がいたら「前回の復習 10 分あるから大丈夫」と一言。
+          </textarea>
+        </section>
+
+        <!-- 2. 今日のゴール -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 今日のゴール
+
+            1. HTML と JavaScript の **つなぎ方** を理解する
+            2. **DOM（ドム）** と **イベント** を自分の言葉で説明できる
+            3. 3 つの小課題が **自分のブラウザで動く** 状態で帰る
+
+            Note:
+            「覚える」より「動かす」を優先する回。理解は後から追いついてくるので、まず手を動かす。ゴール3が達成されれば合格ラインで、用語が怪しくても OK と伝える。
+          </textarea>
+        </section>
+
+        <!-- 3. 前回の振り返り -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 前回の振り返り（口頭クイズ）
+
+            - `const` と `let` の違いは？
+            - `for` で 1〜10 を `console.log` するには？
+            - 関数の **入力 → 処理 → 出力** の形は？
+            - ローカル Git リポジトリとは？（まだ GitHub には出していない状態）
+
+            <span class="sub">※ 10 分を超えない。詰まっても「今日の演習で再登場」で流す。</span>
+
+            Note:
+            手を挙げさせず、順番に軽く当てる。詰まったら即ヒントを出してテンポ優先。「`const` は再代入不可、`let` は可」「`for (let i=1; i<=10; i++) console.log(i);`」あたりが出れば OK。Git はまだ push していない＝自分の PC の中の倉庫、のイメージで十分。
+          </textarea>
+        </section>
+
+        <!-- 4. HTML は部品の設計図 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## HTML は「部品の設計図」
+
+            - `<h1>`, `<button>`, `<p>` … 画面に置く **部品**
+            - それぞれに **`id="xxx"` という名札** を付けられる
+
+            ```html
+            <h1 id="title">このタイトルの色を変えてみよう</h1>
+            <button id="change-color">色を変える</button>
+            ```
+
+            <span class="sub">id = あとで JS から「お前を呼びたい」と指名するための名札。</span>
+
+            Note:
+            ホワイトボードに四角を 2 つ描いて、それぞれ「id=title」「id=change-color」とラベリングするとイメージが入る。class との違いはここでは触れない（次回以降）。
+          </textarea>
+        </section>
+
+        <!-- 5. JS は部品をいじる手 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## JS は「部品をいじる手」
+
+            - `document.getElementById("xxx")` で **名札の部品をつかむ**
+            - つかんだら `.innerText = "..."` で **中身を書きかえ** られる
+
+            ```js
+            const title = document.getElementById("title");
+            title.innerText = "こんにちは！";
+            ```
+
+            <span class="sub">つかむ → 触る、この 2 ステップで今日の 8 割は動く。</span>
+
+            Note:
+            「つかむ → 触る」の 2 語を何度も言う。変数名 `title` は HTML の id と同じにして「つかんだもの = 名札そのもの」のイメージを定着させる。
+          </textarea>
+        </section>
+
+        <!-- 6. DOM とは（家系図の比喩） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## DOM（ドム）とは？
+
+            **Document Object Model** = ブラウザが HTML を **JS から触れる形に変換したもの**
+
+            - 家系図のような **ツリー構造**
+              - `html` の下に `head` / `body`
+              - `body` の下に `h1`, `button`, `p` …
+            - 今日は「取ってきて書きかえる」だけできれば合格
+
+            <span class="sub">HTML = 設計図、DOM = 組み立て済みで JS から手に持てる状態。</span>
+
+            Note:
+            ツリー図をホワイトボードに殴り書きするだけで十分。親子関係は次回以降でやるので、今は「JS から触れる形に変換されたもの」で止める。「ドム」と発音することだけは確認。
+          </textarea>
+        </section>
+
+        <!-- 7. イベントとは -->
+        <section data-markdown>
+          <textarea data-template>
+            ## イベントとは？
+
+            - 「クリックされた」「文字が入力された」などの **出来事**
+            - `addEventListener("種類", 関数)` で
+              **「起きたらこの関数を呼んでね」と予約** する
+
+            ```js
+            button.addEventListener("click", handleClick);
+
+            function handleClick() {
+              console.log("押された！");
+            }
+            ```
+
+            <span class="sub">予約 = 「起きたら呼んでね」のお願い。今は呼ばれない。</span>
+
+            Note:
+            「呼んでね」の予約、という言い方をしつこく使う。第2引数に `handleClick()` とカッコを付けると「今すぐ呼ぶ」になってしまう、という典型ミスは次のページで比較する。
+          </textarea>
+        </section>
+
+        <!-- 8. Arduino との比較（ポーリング vs イベント駆動） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## Arduino と比べてみよう
+
+            | | Arduino | ブラウザ（JS） |
+            |---|---|---|
+            | スタイル | **ポーリング** | **イベント駆動** |
+            | やり方 | `loop()` の中で `digitalRead()` を毎回呼ぶ | `addEventListener` で予約しておく |
+            | ループ | 自分で書く | ブラウザが勝手に回す |
+            | 近い仲間 | — | Arduino の **割り込み** に近い |
+
+            <span class="sub">「押されたか毎回見に行く」から「押されたら呼んでもらう」への発想転換。</span>
+
+            Note:
+            ここが今日の一番のヤマ。中2だと Arduino 経験があるので「毎回見に行く」発想が体に入っている。そこに「予約」という新しい考え方を差し込む。割り込み（interrupt）を知っている子には「それとほぼ同じ」と言うと一発で通じる。
+          </textarea>
+        </section>
+
+        <!-- 9. 板書キーワード -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 今日の道具（板書キーワード）
+
+            ```js
+            // つかむ
+            const el = document.getElementById("id名");
+
+            // 書きかえる
+            el.innerText = "文字";
+            el.style.color = "red";
+
+            // 入力欄の中身を読む
+            const s = input.value;
+
+            // 予約する
+            el.addEventListener("click", handle);
+            ```
+
+            <span class="sub">この 5 つが今日の武器。他は調べながらで OK。</span>
+
+            Note:
+            スライドに映しつつ、板書でも残す。生徒ノート（student-note.md）の表と一致していることを確認。ここから演習に入るので、詰まったらこのページに戻ってくる合図にする。
+          </textarea>
+        </section>
+
+        <!-- 10. 演習の進め方 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 演習の進め方（60 分）
+
+            - **3 問 × 20 分ペース**
+            - 練習1 → 練習2 → 練習3 の順
+            - 編集するのは **`main.js` だけ**（HTML は触らない）
+            - 詰まったら:
+              1. **DevTools Console** を開く（`F12` / `⌘+Option+I`）
+              2. **`console.log`** で中身を覗く
+              3. それでもダメなら講師に声かけ
+
+            <span class="sub">最初の 5 分は何も教えません。まず手を動かしてください。</span>
+
+            Note:
+            「最初の 5 分は何も教えない」は本気で守る。巡回中、声をかけられても「5 分経った？」で一度返す。console.log を最低 1 回使わせることを意識。
+          </textarea>
+        </section>
+
+        <!-- 11. 練習1 問題 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習1: ボタンで文字色を変える
+
+            [practice-01-color](../practice-01-color/) を開く
+
+            - **完成イメージ**: 「色を変える」ボタンを押すと、見出しの文字が **赤** に変わる
+            - 拡張: もう一度押すと **黒に戻る**
+
+            <ul class="tags" aria-label="キーワード">
+              <li>click</li>
+              <li>style.color</li>
+              <li>getElementById</li>
+            </ul>
+
+            Note:
+            リンクは相対パス。生徒は lesson-02 ディレクトリから slides/ と practice-01-color/ が兄弟関係にあることを、このページで体感する。拡張はできる子向け。
+          </textarea>
+        </section>
+
+        <!-- 12. 練習1 ヒント -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習1 ヒント
+
+            1. 見出しの id は `title`、ボタンの id は `change-color`
+            2. 文字色は `要素.style.color = "red"` で変わる
+            3. `addEventListener("click", handleClick)` の **第2引数は関数名だけ**（`()` を付けない）
+
+            ```js
+            const title = document.getElementById("____");
+            const button = document.getElementById("____");
+
+            button.addEventListener("____", () => {
+              title.style.____ = "____";
+            });
+            ```
+
+            <span class="sub">穴は自分で埋める。`() => { ... }` は「矢印 = function の略記」くらいでまず動かす（詳しくは第3回）。</span>
+
+            Note:
+            このスライドは詰まった子が出たタイミングでだけ映す。最初から映すと考えなくなる。穴埋め形式にしているのは、骨格だけ見せて手を動かさせるため。アロー関数 `() => { ... }` はこれが初見の子もいる。「矢印は function と思ってくれれば OK」と口頭で流す（詳細は第3回）。
+          </textarea>
+        </section>
+
+        <!-- 13. 練習2 問題 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習2: 入力を大文字に変換
+
+            [practice-02-uppercase](../practice-02-uppercase/) を開く
+
+            - **完成イメージ**: 入力欄に `hello` と打つと、下の結果欄に **1 文字ずつ** `H` → `HE` → `HEL` → `HELL` → `HELLO` と出る
+            - 全部消したら結果欄も空になる
+
+            <ul class="tags" aria-label="キーワード">
+              <li>input</li>
+              <li>.value</li>
+              <li>toUpperCase</li>
+            </ul>
+
+            Note:
+            ここで初めて `.value` が出てくる。`.innerText` との違いは講義で一度やっているが、もう一度強調する。入力欄の中身は `.value`、表示用の文字は `.innerText`。
+          </textarea>
+        </section>
+
+        <!-- 14. 練習2 ヒント -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習2 ヒント
+
+            1. `<input>` の中身は **`.innerText` ではなく `.value`**
+            2. 大文字化は `"hello".toUpperCase()` → `"HELLO"`
+            3. イベントの種類は **`"input"`**（入力されるたび）
+            4. 最後に **一度だけ関数を呼ぶ** と、ページを開いた直後の表示も整う
+
+            ```js
+            const source = document.getElementById("____");
+            const output = document.getElementById("____");
+
+            function handleInput() {
+              // ① source の中身を取る（.value）
+              // ② 大文字化する（.toUpperCase()）
+              // ③ output.innerText に入れる
+            }
+
+            source.addEventListener("____", handleInput);
+            // 最初の 1 回を呼んでおく
+            handleInput();
+            ```
+
+            <span class="sub">骨だけ。中身は自分で書く。`() =>` を使う書き方は「矢印 = function の略記」（第3回で詳しく）。</span>
+
+            Note:
+            この問題は「`.value` vs `.innerText` をちゃんと分けて使えるか」が唯一のハマりどころ。`"input"` イベント名も初見なので、「`change` は選び直したとき、`input` は 1 文字ごと」と口頭で一言添える。main.js の TODO 5（初回呼び出し）と揃えてあるので、空表示の挙動をちゃんと出させる。
+          </textarea>
+        </section>
+
+        <!-- 15. 練習3 問題 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習3: ラジオで挨拶切替
+
+            [practice-03-greeting](../practice-03-greeting/) を開く
+
+            - **完成イメージ**: 朝 / 昼 / 夜 を選ぶと、下に挨拶が切りかわる
+
+            | 選んだ値 | 表示 |
+            |---|---|
+            | `morning` | おはよう |
+            | `noon`    | こんにちは |
+            | `night`   | こんばんは |
+
+            <ul class="tags" aria-label="キーワード">
+              <li>change</li>
+              <li>querySelector</li>
+              <li>forEach</li>
+            </ul>
+
+            Note:
+            3 問目は DOM 取得が複雑になる。ここまでの 2 問で `getElementById` に慣れてもらったうえで、`querySelector` を解禁する。「CSS の書き方そのまま」と説明すると中2でもすんなり入る子が多い。
+          </textarea>
+        </section>
+
+        <!-- 16. 練習3 ヒント -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習3 ヒント
+
+            1. 今チェックされているラジオを取る:
+               ```js
+               const checked = document.querySelector('input[name="time"]:checked');
+               const value = checked.value;
+               ```
+            2. ラジオ全部に `change` イベントを付ける:
+               ```js
+               const radios = document.querySelectorAll('input[name="time"]');
+               radios.forEach((r) => r.addEventListener("change", update));
+               ```
+            3. 値 → 文言の分岐は `if / else if / else` で
+
+            <span class="sub">`(r) => r.addEventListener(...)` の `=>` は「function の略記」くらいの理解で OK（第3回で詳しく）。</span>
+
+            Note:
+            `querySelectorAll` が返すのは NodeList で配列っぽいもの、くらいの説明で止める。`forEach` は Arduino の `for (int i=0; i<N; i++)` と同じ発想で通じる。余裕があれば「10 個になったら if の山で読みにくいよね？ 次回やる」と次回予告をここで一言。
+          </textarea>
+        </section>
+
+        <!-- 17. つまずいたら -->
+        <section data-markdown>
+          <textarea data-template>
+            ## つまずいたら、まずここ
+
+            - **DevTools Console を開く**（`F12` / `⌘+Option+I`）
+            - **赤いエラー文** をそのまま読む
+              - `Cannot read properties of null` → `getElementById` の **id 名が違う**
+            - 自分で `console.log` を仕込む
+
+            ```js
+            const title = document.getElementById("title");
+            console.log("title:", title); // null だったら id 名が違う
+            ```
+
+            <span class="sub">Arduino の `Serial.println` と同じ役割。出す習慣を付ける。</span>
+
+            Note:
+            Console を開いていない子は 100 倍詰む。巡回中、詰まっている子を見たら真っ先に「Console 開いてる？」と聞く。id のスペルミス（`titile` など）は中2でよくある。
+          </textarea>
+        </section>
+
+        <!-- 18. 今日のまとめ -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 今日のまとめ（3 行）
+
+            1. HTML の `id` を `document.getElementById` で **取ってきて** JS から触れる
+            2. ボタン等で何かが起きたら動かすのが `addEventListener`
+            3. Arduino の `digitalRead` ループと違い、ブラウザは **「起きたら呼んでね」と予約** するスタイル
+
+            Note:
+            生徒に言わせる。全員に順番に当てる必要はないが、最低 3 人には声を出させて「口から出せるか」を確認する。言葉が出なければ今日の理解が浅い証拠。
+          </textarea>
+        </section>
+
+        <!-- 19. キーワード穴埋めクイズ（問題） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## キーワード穴埋めクイズ
+
+            - `document.__________("title")` で要素を取ってくる
+            - `input.__________` で入力欄の中身を読む
+            - クリックを捕まえるのは `addEventListener("______", ...)`
+
+            <span class="sub">先に口頭で当てる。全員答えたらクリックで答え合わせ。</span>
+
+            Note:
+            この時点では答えを見せない。全員に順番で当てて、出揃ってから次スライドに進む。間違えても「惜しい」とだけ返してすぐ次へ。
+          </textarea>
+        </section>
+
+        <!-- 20. キーワード穴埋めクイズ（答え合わせ） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 答え合わせ
+
+            - `document.`**`getElementById`**`("title")`
+            - `input.`**`value`**
+            - `addEventListener("`**`click`**`", ...)`
+
+            <span class="sub">スペル注意: `getElementById` は `I` が大文字 1 つだけ。</span>
+
+            Note:
+            ここで初めて答えを見せる。`getElementById` のスペルミス（`getElementByID` など）は中2でよくある典型ミスなので、板書でも一度なぞる。
+          </textarea>
+        </section>
+
+        <!-- 21. 宿題 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 宿題
+
+            **練習3（挨拶切替）を自分流に拡張してくる**
+
+            - 選択肢を 4 つ以上に増やす（例: 夕方・深夜）
+            - 名前入力欄を足して「○○さん、おはよう」と出す
+            - その他、自分で思いついた変更 OK
+
+            <span class="spacer"></span>
+
+            <span class="sub">次回冒頭で、何を足したかを 1 分で口頭紹介してもらいます。</span>
+
+            Note:
+            「全部盛り」を求めない。ひとつだけでも変えてきたら合格。次回冒頭の 1 分紹介は、人前で話す練習も兼ねる。発表が苦手な子にはスライドなしの口頭で OK と伝える。
+          </textarea>
+        </section>
+
+        <!-- 22. 次回予告 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 次回予告（第3回）
+
+            ### 関数で整理する
+
+            - 今日の `main.js` に並べたコードを、**きれいな関数** に分ける
+            - 引数と戻り値をちゃんと使う
+            - 配列の `map` / `filter` の入り口
+
+            <span class="sub">「if の山」を関数に切り出すと、読みやすく・変えやすくなる体験をする。</span>
+
+            Note:
+            練習3 のヒントで「if の山」に触れているので、ここはその回収。次回は「読みやすさ」を初めて明示的にテーマにする回、と予告しておくと宿題に取り組む動機になる。
+          </textarea>
+        </section>
+
+        <!-- 23. おつかれさま / 教材 URL -->
+        <section data-markdown>
+          <textarea data-template>
+            ## おつかれさまでした
+
+            - ハブ: [lesson-02 トップ](../)
+            - 練習1: [practice-01-color](../practice-01-color/)
+            - 練習2: [practice-02-uppercase](../practice-02-uppercase/)
+            - 練習3: [practice-03-greeting](../practice-03-greeting/)
+
+            <span class="spacer"></span>
+
+            **次回も元気で会いましょう！**
+
+            Note:
+            授業後、練習ページは自宅からでも開けることを確認。GitHub Pages で公開されている場合は、URL を口頭でも一度伝える。生徒用ノートはハブページからたどれる。質問がある子はこのタイミングで拾う。
+          </textarea>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Reveal.js core + plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: true,
+        width: 1280,
+        height: 720,
+        margin: 0.06,
+        controls: true,
+        progress: true,
+        center: false,
+        transition: "slide",
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>

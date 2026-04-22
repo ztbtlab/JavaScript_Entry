@@ -28,7 +28,7 @@ button.addEventListener("click", handleClick);
 function handleClick() {
   console.log("押された！");
   console.log(title.style.color);
-  if(title.style.coler == "red"){
+  if(title.style.color == "red"){
     title.style.color = "black";
     console.log("red if");
   }else{

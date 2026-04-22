@@ -12,10 +12,10 @@
 //  - クリックではなく入力ごとに反応させたいので "input" イベントを使う
 
 // TODO 1: 入力欄を取ってくる（id="source"）
-const source = null;
+const source = document.getElementById("source");
 
 // TODO 2: 表示欄を取ってくる（id="output"）
-const output = null;
+const output = document.getElementById("output");
 
 console.log("source:", source);
 console.log("output:", output);
@@ -25,8 +25,12 @@ console.log("output:", output);
 //          ① 入力欄の中身（value）を変数に入れる
 //          ② 大文字に変える
 //          ③ それを output.innerText に入れる
+
+source.addEventListener("input", handleInput);
+
 function handleInput() {
-  // ここを書く（3 ステップを 3 行で書いてみる）
+  console.log(source.value);
+  output.innerText = source.value.toUpperCase();
 }
 
 // TODO 4: source に "input" イベントを登録する

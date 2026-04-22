@@ -31,6 +31,9 @@ source.addEventListener("input", handleInput);
 function handleInput() {
   console.log(source.value);
   output.innerText = source.value.toUpperCase();
+  if(source.value == ""){
+  output.innerText = "(まだ入力されていません)"
+  }
 }
 
 // TODO 4: source に "input" イベントを登録する
@@ -44,3 +47,4 @@ function handleInput() {
 // ----- 余裕があれば -----
 // ・空っぽのときは "（まだ入力されていません）" と出す
 // ・大文字ではなく .toLowerCase() にしてみる
+handleInput();

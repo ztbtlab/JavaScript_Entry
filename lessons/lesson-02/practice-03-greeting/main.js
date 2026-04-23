@@ -16,19 +16,48 @@
 //    これは配列っぽいものなので、forEach で 1 つずつ処理できる
 
 // TODO 1: 表示欄を取ってくる（id="greeting"）
-const greeting = null;
+const greeting = document.getElementById("greeting");
 
 // TODO 2: ラジオボタンを全部取ってくる
-const radios = null; // 例: document.querySelectorAll('input[name="time"]')
+const radios = document.querySelectorAll('input[name="time"]'); // 例: document.querySelectorAll('input[name="time"]')
+const checked = document.querySelector('input[name="time"]:checked');
+const value = checked.value;
+
+let greeting_text;
+let test;
 
 console.log("greeting:", greeting);
 console.log("radios:", radios);
+
+
+radios.forEach(radio => {
+  radio.addEventListener("change", decideGreeting);
+});
+
+
 
 // TODO 3: 選ばれた値を受け取って、挨拶文字列を返す関数を作る
 //         value は "morning" / "noon" / "night" の 3 つ
 //         ヒント: if / else if / else で 3 分岐して、それぞれ return する
 function decideGreeting(value) {
-  // ここを書く
+  console.log("decideGreeting");
+
+for (let i = 0; i < 3; i++){
+    if (radios.item(i).checked){
+        test = radios.item(i).value;
+        console.log(test);
+    }
+}
+
+
+  if(test == "morning"){
+    greeting_text = "おはよう";
+  }else if(test == "noon"){
+    greeting_text = "こんにちは";
+  }else{
+    greeting_text = "こんばんは";
+  }
+  updateGreeting();
   return "";
 }
 
@@ -39,7 +68,7 @@ function decideGreeting(value) {
 //          ③ decideGreeting(value) で挨拶文字列を作る
 //          ④ greeting.innerText にセットする
 function updateGreeting() {
-  // ここを書く
+  greeting.innerText = greeting_text;
 }
 
 // TODO 5: 各ラジオに "change" イベントを登録

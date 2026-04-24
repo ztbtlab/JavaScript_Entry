@@ -21,18 +21,18 @@ const greeting = document.getElementById("greeting");
 // TODO 2: ラジオボタンを全部取ってくる
 const radios = document.querySelectorAll('input[name="time"]'); // 例: document.querySelectorAll('input[name="time"]')
 const checked = document.querySelector('input[name="time"]:checked');
-const value = checked.value;
+let value = checked.value;
 
 let greeting_text;
-let test;
 
 console.log("greeting:", greeting);
 console.log("radios:", radios);
 
 
 radios.forEach(radio => {
-  radio.addEventListener("change", decideGreeting);
+  radio.addEventListener("change", () => decideGreeting(value));
 });
+
 
 
 
@@ -42,17 +42,16 @@ radios.forEach(radio => {
 function decideGreeting(value) {
   console.log("decideGreeting");
 
-for (let i = 0; i < 3; i++){
+  for (let i = 0; i < 3; i++){
     if (radios.item(i).checked){
-        test = radios.item(i).value;
-        console.log(test);
+        value = radios.item(i).value;
+        console.log(value);
     }
 }
 
-
-  if(test == "morning"){
+  if(value == "morning"){
     greeting_text = "おはよう";
-  }else if(test == "noon"){
+  }else if(value == "noon"){
     greeting_text = "こんにちは";
   }else{
     greeting_text = "こんばんは";
@@ -68,8 +67,15 @@ for (let i = 0; i < 3; i++){
 //          ③ decideGreeting(value) で挨拶文字列を作る
 //          ④ greeting.innerText にセットする
 function updateGreeting() {
+  console.log("updateGreeting");
+  console.log(greeting_text);
+  console.log(value);
   greeting.innerText = greeting_text;
 }
+
+
+radios[0].checked = true;
+decideGreeting("morning");
 
 // TODO 5: 各ラジオに "change" イベントを登録
 //         radios を 1 つずつ回して addEventListener を呼ぶ。

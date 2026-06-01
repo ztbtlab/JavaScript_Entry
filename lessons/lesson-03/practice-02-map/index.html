@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>練習2: 距離センサー値を map で変換</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: #f7f7f7;
+        color: #222;
+        margin: 0;
+        padding: 2rem 1rem;
+      }
+      main {
+        max-width: 620px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      code {
+        background: #eef2f7;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.95em;
+      }
+      #output {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: #eef2f7;
+        border-radius: 6px;
+        font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+        font-size: 1.1rem;
+        min-height: 1.5rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      a {
+        color: #2b6cb0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p><a href="../index.html">← 第3回トップに戻る</a></p>
+
+      <h1>練習2: 距離センサー値を map で変換</h1>
+      <p>
+        距離センサーで測った値（cm）の配列を、<code>map</code> を使ってまとめて
+        <strong>mm（ミリメートル）に変換（10 倍）</strong>する。
+      </p>
+      <p>結果は下の枠と、DevTools の Console の両方に出す。</p>
+
+      <!-- ここに変換後の配列を表示する。id="output" を目印にする。 -->
+      <div id="output">（ここに結果が出ます）</div>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>

@@ -21,20 +21,25 @@ const output = document.getElementById("output");
 // TODO 1: cm を受け取り、mm（cm * 10）を return で返す関数を作る
 function cmToMm(cm) {
   // ここを書く（return を忘れない）
+  return cm * 10;
 }
 
 // TODO 2: distancesCm を map で変換して、新しい配列 distancesMm を作る
 //         ヒント: distancesCm.map(cmToMm)
-const distancesMm = null; // 例: distancesCm.map(cmToMm)
+const distancesMm = distancesCm.map(cmToMm); // 例: distancesCm.map(cmToMm)
 
 // TODO 3: Console で確認する
 //         元の配列と、変換後の配列の両方を出すと違いが分かりやすい
 // 例: console.log("cm:", distancesCm);
 //     console.log("mm:", distancesMm);
+console.log("cm:", distancesCm);
+console.log("mm", distancesMm);
 
 // TODO 4: 画面の output に、変換後の配列を文字列にして表示する
 //         配列を「120, 80, 300, ...」のように 1 行にするには .join(", ") を使う
 // 例: output.innerText = distancesMm.join(", ") + " mm";
+
+output.innerText = distancesMm.join(", ") + " mm";
 
 // ----- 余裕があれば拡張してみよう -----
 // ・map の中にアロー関数を直接書く:  const distancesMm = distancesCm.map((cm) => cm * 10);

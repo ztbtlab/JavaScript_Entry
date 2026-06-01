@@ -33,7 +33,7 @@ const distancesMm = distancesCm.map(cmToMm); // 例: distancesCm.map(cmToMm)
 // 例: console.log("cm:", distancesCm);
 //     console.log("mm:", distancesMm);
 console.log("cm:", distancesCm);
-console.log("mm", distancesMm);
+console.log("mm:", distancesMm);
 
 // TODO 4: 画面の output に、変換後の配列を文字列にして表示する
 //         配列を「120, 80, 300, ...」のように 1 行にするには .join(", ") を使う
@@ -44,3 +44,7 @@ output.innerText = distancesMm.join(", ") + " mm";
 // ----- 余裕があれば拡張してみよう -----
 // ・map の中にアロー関数を直接書く:  const distancesMm = distancesCm.map((cm) => cm * 10);
 // ・10 倍ではなく 100 倍（cm → 0.1mm 単位）にしてみる
+
+const distancesMm2 = distancesCm.map((cm) => cm * 10);
+console.log("mm", distancesMm2);
+output.innerText = distancesMm2.join(" mm, ") + " mm";

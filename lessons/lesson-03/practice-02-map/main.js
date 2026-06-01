@@ -47,4 +47,4 @@ output.innerText = distancesMm.join(", ") + " mm";
 
 const distancesMm2 = distancesCm.map((cm) => cm * 10);
 console.log("mm", distancesMm2);
-output.innerText = distancesMm2.join(" mm, ") + " mm";
+output.innerText = distancesMm2.map((cm) => cm + " mm");

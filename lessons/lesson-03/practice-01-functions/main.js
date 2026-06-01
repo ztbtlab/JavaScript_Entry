@@ -21,23 +21,27 @@ const count = 3; // 個数
 // TODO 1: 単価 price と 個数 count を受け取り、合計（price * count）を return で返す関数
 function calcTotal(price, count) {
   // ここを書く（return を忘れない）
+  return price * count;
 }
 
 // TODO 2: 金額 amount を受け取り、税込み額（amount * 1.1 を小数切り捨て）を return で返す関数
 //         ヒント: Math.floor(amount * 1.1)
 function applyTax(amount) {
   // ここを書く（return を忘れない）
+  return amount * 1.1;
 }
 
 // TODO 3: 上の関数を呼び出して、結果を変数に入れる
 //         ① calcTotal(price, count) の戻り値を total に入れる
 //         ② applyTax(total) の戻り値を totalWithTax に入れる
-const total = null; // 例: calcTotal(price, count)
-const totalWithTax = null; // 例: applyTax(total)
+const total = calcTotal(price, count); // 例: calcTotal(price, count)
+const totalWithTax = applyTax(total); // 例: applyTax(total)
 
 // TODO 4: Console に表示する
 //         「合計: ○○ 円」「税込み: ○○ 円」のように console.log で出す
 // 例: console.log("合計:", total, "円");
+console.log("合計:", total, "円")
+console.log("税込み:", totalWithTax.toFixed(0), "円")
 
 // ----- 余裕があれば拡張してみよう -----
 // ・calcTotal をアロー関数に書き直す:  const calcTotal = (price, count) => price * count;

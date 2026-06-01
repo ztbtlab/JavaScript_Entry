@@ -24,21 +24,33 @@ const output = document.getElementById("output");
 //         ヒント: return temp >= 25;
 function isHot(temp) {
   // ここを書く（true / false を return する）
+  return temp >= 25;
 }
 
 // TODO 2: temps を filter で絞り込んで、25 度以上だけの新しい配列 hotDays を作る
 //         ヒント: temps.filter(isHot)
-const hotDays = null; // 例: temps.filter(isHot)
+const hotDays =   temps.filter(isHot); // 例: temps.filter(isHot)
 
 // TODO 3: Console で確認する（元の配列・絞り込み後・件数）
 // 例: console.log("全部:", temps);
 //     console.log("暑い日:", hotDays);
 //     console.log("件数:", hotDays.length);
 
+console.log("全部:", temps);
+console.log("暑い日:", hotDays);
+console.log("件数:", hotDays.length);
+
 // TODO 4: 画面の output に表示する
 //         「暑い日: 26, 30, 25, 28 ℃（4件）」のように出したい
 //         配列を 1 行にするには .join(", ")、件数は hotDays.length
 // 例: output.innerText = "暑い日: " + hotDays.join(", ") + " ℃（" + hotDays.length + "件）";
+
+
+//output.innerText = "暑い日: " + hotDays.join(", ") + "℃ (" + hotDays.length + "件)";
+
+
+output.innerText = "暑い日: " + hotDays.join("℃, ") + "℃ (" + hotDays.length + "件)";
+
 
 // TODO 5（発展）: map と合わせ技
 //   hotDays を map で「"26℃", "30℃", ...」のように単位付き文字列の配列にしてから表示してみよう。

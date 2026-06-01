@@ -46,3 +46,7 @@ console.log("税込み:", totalWithTax.toFixed(0), "円")
 // ----- 余裕があれば拡張してみよう -----
 // ・calcTotal をアロー関数に書き直す:  const calcTotal = (price, count) => price * count;
 // ・送料を足す関数 addShipping(amount) を増やす（例: 500 円足す）
+
+const calcTotal2 = (price, count) => price * count;
+
+console.log("合計:", calcTotal2(price, count) , "円");

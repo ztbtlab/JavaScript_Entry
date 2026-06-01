@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第3回: 関数で整理する</title>
+    <style>
+      /* 最小限の見やすさ優先スタイル */
+      body {
+        font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: #f7f7f7;
+        color: #222;
+        margin: 0;
+        padding: 2rem 1rem;
+        line-height: 1.7;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 1.5rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        border-bottom: 3px solid #2b6cb0;
+        padding-bottom: 0.3rem;
+      }
+      h2 {
+        margin-top: 2rem;
+        color: #2b6cb0;
+      }
+      ol.practices li {
+        margin-bottom: 0.8rem;
+      }
+      code {
+        background: #eef2f7;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.95em;
+      }
+      .keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+      }
+      .keywords span {
+        background: #e6f0fb;
+        color: #1a4b80;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.9rem;
+      }
+      .badge {
+        display: inline-block;
+        background: #fde68a;
+        color: #8a5a00;
+        padding: 0.1rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        margin-left: 0.3rem;
+      }
+      a {
+        color: #2b6cb0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>第3回: 関数で整理する</h1>
+      <p>
+        今日のゴールは「処理を<strong>関数</strong>にまとめて読みやすくする」ことと、
+        「配列を <code>map</code> でまとめて変換し、<code>filter</code> で絞り込む」こと。
+        結果はおもに <strong>DevTools の Console</strong>（ブラウザの開発者ツール）で確かめる。
+        下の練習を上から順にやっていこう。
+      </p>
+
+      <h2>今日のキーワード</h2>
+      <div class="keywords">
+        <span>関数（function）</span>
+        <span>引数</span>
+        <span>戻り値（return）</span>
+        <span>アロー関数（=&gt;）</span>
+        <span>配列</span>
+        <span>map</span>
+        <span>filter</span>
+        <span>reduce（名前だけ）</span>
+        <span>console.log</span>
+        <span>DevTools Console</span>
+      </div>
+
+      <h2>練習問題</h2>
+      <ol class="practices">
+        <li>
+          <a href="./practice-01-functions/index.html">練習1: 関数で整理する</a>
+          — <code>calcTotal</code> と <code>applyTax</code>（引数・戻り値・アロー関数）
+        </li>
+        <li>
+          <a href="./practice-02-map/index.html">練習2: 距離センサー値を map で変換</a>
+          — <code>cmToMm</code> と <code>distancesCm.map(...)</code>
+        </li>
+        <li>
+          <a href="./practice-03-filter/index.html">練習3: 気温配列を filter で絞り込む</a>
+          <span class="badge">発展 / 宿題</span>
+          — <code>isHot</code> と <code>temps.filter(...)</code>
+        </li>
+      </ol>
+      <p>
+        <small>
+          ※ 練習3 は<strong>発展課題</strong>。授業内は練習1・2を進め、
+          早く終わった人だけ練習3に進む。練習3は全員、宿題として家でも取り組む。
+        </small>
+      </p>
+
+      <h2>うまく動かないときは</h2>
+      <ul>
+        <li>ブラウザで <code>F12</code>（または <code>⌘ + Option + I</code>）で DevTools を開き、<strong>Console タブ</strong>を見る</li>
+        <li>練習1 は<strong>画面に何も出ない</strong>。結果は Console に出るので、必ず Console を開く</li>
+        <li><code>undefined</code> が出たら、関数に <code>return</code>（戻り値の出口）を書き忘れている合図</li>
+        <li>赤い文字のエラーをそのまま読む（英語でも OK。分からない単語だけ調べる）</li>
+        <li>あやしい変数は <code>console.log(変数名)</code> で中身を見る</li>
+      </ul>
+
+      <h2>生徒用ノート</h2>
+      <p>
+        今日の内容のまとめ: <a href="./student-note.md">student-note.md</a>
+        <br />
+        <small>
+          ※ このファイルは Markdown（マークダウン）という書式で書かれている。
+          ブラウザで開くと文字がそのまま見えるので、授業前に印刷した紙の方を見るか、
+          GitHub 上で開くと読みやすい表示になる。
+        </small>
+      </p>
+    </main>
+  </body>
+</html>

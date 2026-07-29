@@ -62,7 +62,7 @@ button {
   font-size: 1.1rem;
   min-height: var(--button-min-height);
   padding: var(--space-sm) var(--space-md);
-  border: none;
+  border: 2px solid #e81515;
   border-radius: var(--radius-sm);
   background: var(--color-accent);
   color: var(--color-surface);
@@ -84,4 +84,10 @@ button:hover {
 /* ここが今日の主役。この「名札（クラス）」が付いた要素は画面から消える */
 .hidden {
   display: none;
+}
+
+
+.test {
+  color:red;
+  background-color:yellow;
 }

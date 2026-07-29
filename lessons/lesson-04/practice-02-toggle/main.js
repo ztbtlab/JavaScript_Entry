@@ -26,6 +26,8 @@ let isOpen = true; // ← 状態。今パネルが開いているかどうか
 
 const panel = document.getElementById("panel"); // 出し入れするパネル
 const toggleButton = document.getElementById("toggleButton"); // 切り替えボタン
+let counter = 0; // 開いた回数を数える状態
+const count = document.getElementById("count"); // 開いた回数を表示する場所
 
 // ここから自分で書く ------------------------------------------
 
@@ -34,21 +36,35 @@ const toggleButton = document.getElementById("toggleButton"); // 切り替えボ
 //         toggleButton.innerText に入れる（if / else を使う）
 function updateButtonText() {
   // ここを書く
+  if (isOpen) {
+    toggleButton.innerText = "閉じる";
+    toggleButton.classList.add("test");
+  } else {
+    toggleButton.innerText = "開く";
+    toggleButton.classList.remove("test");
+  }
+  count.innerText = counter;
 }
 
 toggleButton.addEventListener("click", () => {
   // TODO 2: panel に "hidden" クラスを付けたり外したりする（1 行）
   // ここを書く
+  panel.classList.toggle("hidden");
 
   // TODO 3: 状態 isOpen をひっくり返す
   // ここを書く
+  isOpen = !isOpen;
+
+  counter++;
 
   // TODO 4: 状態を変えたので、ボタンの文字を描き直す
   // ここを書く
+  updateButtonText();
 });
 
 // TODO 5: 最初の表示のために updateButtonText() を 1 回呼ぶ
 // ここを書く
+updateButtonText();
 
 // ----- 余裕があれば拡張してみよう -----
 // ・パネルが閉じているときだけボタンの色を変える（もう 1 つクラスを作って toggle する）

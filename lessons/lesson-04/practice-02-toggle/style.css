@@ -16,6 +16,15 @@
   --content-width: 560px;
   --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.08);
   --button-min-height: 3rem;
+  /* 拡張演出で使う色 */
+  --color-closed: #2f855a;
+  --color-closed-dark: #22623f;
+  --color-rage-1: #dd6b20;
+  --color-rage-1-dark: #9c4221;
+  --color-rage-2: #c53030;
+  --color-rage-2-dark: #822727;
+  --color-rage-3: #7b1113;
+  --color-rage-3-dark: #4a0a0b;
 }
 
 body {
@@ -61,16 +70,26 @@ button {
   font-family: inherit;
   font-size: 1.1rem;
   min-height: var(--button-min-height);
+  min-width: 8rem;
   padding: var(--space-sm) var(--space-md);
-  border: none;
+  border: 2px solid var(--color-accent-dark);
   border-radius: var(--radius-sm);
   background: var(--color-accent);
   color: var(--color-surface);
   cursor: pointer;
+  /* 色が変わるときに、ぱっと切り替わらず滑らかに移る */
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.15s ease;
 }
 
 button:hover {
   background: var(--color-accent-dark);
+}
+
+button:active {
+  transform: scale(0.96);
 }
 
 /* 出し入れするパネル */
@@ -79,9 +98,320 @@ button:hover {
   padding: var(--space-md);
   background: var(--color-soft);
   border-radius: var(--radius-sm);
+  transform-origin: top center;
 }
 
 /* ここが今日の主役。この「名札（クラス）」が付いた要素は画面から消える */
 .hidden {
   display: none;
+}
+
+/* ===== ここから拡張演出 ==============================================
+   JS 側は「クラスを付け外しするだけ」。見た目の仕事は全部 CSS に置く。
+   こうしておくと、演出を変えたいときに main.js を触らなくて済む。 */
+
+/* --- ボタンの下に出る「回数」と「ひとこと」--- */
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-sm) var(--space-md);
+  margin: var(--space-sm) 0 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.status-mood {
+  font-weight: 700;
+  color: var(--color-accent-dark);
+}
+
+/* ひとことが差し替わるたびに、ふわっと出す */
+.status-mood.is-new {
+  animation: mood-in 0.4s ease-out;
+}
+
+@keyframes mood-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- 閉じているときだけボタンの色を変える（拡張課題そのもの）--- */
+#toggleButton.is-closed {
+  background: var(--color-closed);
+  border-color: var(--color-closed-dark);
+  /* 「開いてほしそう」にゆっくり呼吸する */
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+#toggleButton.is-closed:hover {
+  background: var(--color-closed-dark);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(47, 133, 90, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(47, 133, 90, 0);
+  }
+}
+
+/* --- 怒りゲージ: 押しすぎると色が濃くなり、震えが速くなる --- */
+#toggleButton.is-rage-1 {
+  background: var(--color-rage-1);
+  border-color: var(--color-rage-1-dark);
+  animation: twitch 0.5s ease-in-out infinite;
+}
+
+#toggleButton.is-rage-2 {
+  background: var(--color-rage-2);
+  border-color: var(--color-rage-2-dark);
+  animation: twitch 0.28s ease-in-out infinite;
+}
+
+#toggleButton.is-rage-3 {
+  background: var(--color-rage-3);
+  border-color: var(--color-rage-3-dark);
+  animation: twitch 0.12s linear infinite;
+}
+
+/* 怒っている間は :hover の色より怒りの色を優先させたいので、上書きしておく */
+#toggleButton.is-rage-1:hover {
+  background: var(--color-rage-1-dark);
+}
+#toggleButton.is-rage-2:hover {
+  background: var(--color-rage-2-dark);
+}
+#toggleButton.is-rage-3:hover {
+  background: var(--color-rage-3-dark);
+}
+
+#toggleButton:disabled {
+  cursor: not-allowed;
+}
+
+@keyframes twitch {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-2px, 1px) rotate(-0.8deg);
+  }
+  75% {
+    transform: translate(2px, -1px) rotate(0.8deg);
+  }
+}
+
+/* 怒りが上がるほど、パネルの方もそわそわし始める */
+body[data-rage="2"] #panel {
+  animation: twitch 0.6s ease-in-out infinite;
+}
+
+body[data-rage="3"] #panel {
+  animation: twitch 0.2s linear infinite;
+}
+
+/* --- 気まぐれ: 開きかけて、ためらって、やっぱり閉じる --- */
+#panel.is-peeking {
+  overflow: hidden;
+  animation: peek 0.7s ease-in-out forwards; /* 0.7s = main.js の PEEK_MS */
+}
+
+@keyframes peek {
+  0% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.8);
+  }
+  30% {
+    max-height: 200px;
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+  /* ここが「ためらい」。左右に迷ってから引っ込む */
+  45% {
+    max-height: 180px;
+    transform: translateX(-5px) scaleY(0.98);
+  }
+  60% {
+    max-height: 190px;
+    transform: translateX(5px) scaleY(0.98);
+  }
+  75% {
+    max-height: 120px;
+    opacity: 0.8;
+    transform: translateX(0) scaleY(0.9);
+  }
+  100% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.75);
+  }
+}
+
+/* --- すんなり開いたとき --- */
+#panel.is-opening {
+  animation: open-in 0.45s cubic-bezier(0.2, 1.3, 0.35, 1);
+}
+
+@keyframes open-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scaleY(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- ブチギレ中: 画面のふちが赤くなる --- */
+body.is-raging::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  box-shadow: inset 0 0 120px 30px rgba(197, 48, 48, 0.55);
+  animation: rage-pulse 0.4s ease-in-out infinite;
+}
+
+@keyframes rage-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* カード全体を揺らす（練習1 と同じ） */
+main.is-shaking {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  20% {
+    transform: translateX(-10px) rotate(-1deg);
+  }
+  40% {
+    transform: translateX(10px) rotate(1deg);
+  }
+  60% {
+    transform: translateX(-6px) rotate(-0.6deg);
+  }
+  80% {
+    transform: translateX(6px) rotate(0.6deg);
+  }
+}
+
+/* 画面全体を一瞬光らせる幕（ブチギレは赤く光る） */
+.screen-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 80, 80, 0.85),
+    rgba(255, 80, 80, 0) 65%
+  );
+  animation: flash 0.55s ease-out forwards;
+}
+
+@keyframes flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* 真ん中にドンと出る文字 */
+.burst-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 10000;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: clamp(2.2rem, 11vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  background: linear-gradient(90deg, #ff3b6b, #ff8a00, #ff3b6b);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.25));
+  animation:
+    burst 1.1s cubic-bezier(0.2, 1.4, 0.4, 1) forwards,
+    rage-flow 1.1s linear infinite;
+}
+
+@keyframes rage-flow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 300% 50%;
+  }
+}
+
+@keyframes burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2) rotate(-12deg);
+    opacity: 0;
+  }
+  35% {
+    transform: translate(-50%, -50%) scale(1.15) rotate(3deg);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -160%) scale(1.05) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+/* 「動きを減らす」設定の人には、派手な動きを出さない（酔い・発作の配慮）
+   色や文字での案内は残るので、演出の意味は伝わる。 */
+@media (prefers-reduced-motion: reduce) {
+  #toggleButton.is-closed,
+  #toggleButton.is-rage-1,
+  #toggleButton.is-rage-2,
+  #toggleButton.is-rage-3,
+  body[data-rage="2"] #panel,
+  body[data-rage="3"] #panel,
+  body.is-raging::after,
+  main.is-shaking,
+  #panel.is-peeking,
+  #panel.is-opening,
+  .status-mood.is-new,
+  .burst-text,
+  .screen-flash {
+    animation: none;
+  }
+  button {
+    transition: none;
+  }
 }

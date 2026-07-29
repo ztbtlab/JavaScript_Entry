@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>練習3: センサー登録フォーム</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <p><a href="../index.html">← 第4回トップに戻る</a></p>
+
+      <h1>練習3: センサー登録フォーム</h1>
+      <p>
+        今日の<strong>総合問題</strong>。状態（練習1）＋ クラスの付け外し（練習2）＋
+        入力の<strong>検証</strong>を 1 つにまとめる。
+        センサー名を入力して「登録」を押すと、登録済みの件数が増えるようにしよう。
+      </p>
+
+      <div class="field">
+        <label for="sensorInput">センサー名（例: 温度センサー）</label>
+        <input id="sensorInput" type="text" placeholder="温度センサー" />
+        <button id="submitButton" type="button">登録</button>
+      </div>
+
+      <!-- エラー文言を出す場所。ふだんは空文字なので何も見えない -->
+      <p id="errorMessage" role="alert"></p>
+
+      <p class="result">
+        <!-- 最初は「-」。showCount() が呼ばれて初めて数に変わる -->
+        登録済み: <span id="count" aria-live="polite">-</span> 件
+      </p>
+
+      <div class="note">
+        <p><strong>完成の目安（3 つとも満たすこと）</strong></p>
+        <ol>
+          <li>空のまま「登録」を押すと<strong>エラー文言が出て、件数は増えない</strong></li>
+          <li>スペースだけ打って押しても<strong>エラーになる</strong></li>
+          <li>文字を入れて押すと<strong>件数が 1 増え、エラーが消え、入力欄が空に戻る</strong></li>
+        </ol>
+        <p>
+          編集するのは <code>main.js</code> だけ。<code>style.css</code> に
+          <code>.error</code>（枠が赤くなる名札）は用意してある。
+        </p>
+        <p>
+          <small>
+            ※ 上の 3 つができたら、仕上げに「エラーのとき入力欄の枠が赤くなる」も付ける（<code>main.js</code> の TODO 4）。
+            赤枠が消えるのは、直してもう一度「登録」を押したとき。
+          </small>
+        </p>
+        <p>
+          <small>
+            ※ このリポジトリは誰でも見られる（Public）。入力欄に自分や友達の<strong>本名を打たない</strong>こと。
+            試すときは「温度センサー」「距離センサー」などにする。
+          </small>
+        </p>
+      </div>
+    </main>
+
+    <!-- 自分で書くファイル。main.js の TODO を埋める -->
+    <script src="main.js"></script>
+  </body>
+</html>

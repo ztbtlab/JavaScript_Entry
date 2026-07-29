@@ -1,0 +1,87 @@
+/* 練習2: トグルの見た目
+   色・余白・角丸は :root にまとめてある（同じ数字をあちこちに書かないための「変数」）。 */
+:root {
+  --color-bg: #f7f7f7;
+  --color-surface: #ffffff;
+  --color-text: #222222;
+  --color-accent: #2b6cb0;
+  --color-accent-dark: #1a4b80;
+  --color-soft: #eef2f7;
+  --font-body: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --content-width: 560px;
+  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.08);
+  --button-min-height: 3rem;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  margin: 0;
+  padding: var(--space-lg) var(--space-md);
+}
+
+main {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  background: var(--color-surface);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+code {
+  background: var(--color-soft);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.note {
+  background: var(--color-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+button {
+  font-family: inherit;
+  font-size: 1.1rem;
+  min-height: var(--button-min-height);
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-surface);
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--color-accent-dark);
+}
+
+/* 出し入れするパネル */
+#panel {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-soft);
+  border-radius: var(--radius-sm);
+}
+
+/* ここが今日の主役。この「名札（クラス）」が付いた要素は画面から消える */
+.hidden {
+  display: none;
+}

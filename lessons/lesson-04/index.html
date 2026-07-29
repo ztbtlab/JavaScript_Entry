@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第4回: 状態を持つ UI</title>
+    <style>
+      /* 色・余白・角丸はここにまとめる（同じ値を何度も書かないための「変数」） */
+      :root {
+        --color-bg: #f7f7f7;
+        --color-surface: #ffffff;
+        --color-text: #222222;
+        --color-accent: #2b6cb0;
+        --color-accent-dark: #1a4b80;
+        --color-soft: #eef2f7;
+        --color-chip-bg: #e6f0fb;
+        --color-badge-bg: #fde68a;
+        --color-badge-text: #8a5a00;
+        --font-body: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        --space-xs: 0.4rem;
+        --space-sm: 0.8rem;
+        --space-md: 1.5rem;
+        --space-lg: 2rem;
+        --radius-md: 8px;
+        --radius-pill: 999px;
+        --content-width: 720px;
+        --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+      body {
+        font-family: var(--font-body);
+        background: var(--color-bg);
+        color: var(--color-text);
+        margin: 0;
+        padding: var(--space-lg) var(--space-md);
+        line-height: 1.7;
+      }
+      main {
+        max-width: var(--content-width);
+        margin: 0 auto;
+        background: var(--color-surface);
+        padding: var(--space-md) var(--space-lg);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-card);
+      }
+      h1 {
+        border-bottom: 3px solid var(--color-accent);
+        padding-bottom: 0.3rem;
+      }
+      h2 {
+        margin-top: var(--space-lg);
+        color: var(--color-accent);
+      }
+      ol.practices li {
+        margin-bottom: var(--space-sm);
+      }
+      code {
+        background: var(--color-soft);
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.95em;
+      }
+      ul.tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+        margin-top: var(--space-xs);
+        padding-left: 0;
+        list-style: none;
+      }
+      ul.tags li {
+        background: var(--color-chip-bg);
+        color: var(--color-accent-dark);
+        padding: 0.2rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.9rem;
+      }
+      .badge {
+        display: inline-block;
+        background: var(--color-badge-bg);
+        color: var(--color-badge-text);
+        padding: 0.1rem 0.5rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.8rem;
+        margin-left: 0.3rem;
+      }
+      .steps {
+        background: var(--color-soft);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+      }
+      a {
+        color: var(--color-accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>第4回: 状態を持つ UI</h1>
+      <p>
+        今日のゴールは「プログラムに<strong>今どうなっているか</strong>を覚えさせる」こと。
+        この“覚えている値”を <strong>状態（じょうたい / state）</strong> と呼ぶ。
+        ボタンを押すたびに数が増えるカウンター、押すたびに開いたり閉じたりするパネル、
+        入力をチェックするフォーム — どれも同じ 1 つの型でできている。
+      </p>
+
+      <h2>今日ずっと使う 3 ステップ</h2>
+      <div class="steps">
+        <ol>
+          <li><strong>状態を持つ</strong> — <code>let count = 0;</code>（変わる値なので <code>let</code>）</li>
+          <li><strong>イベントで状態を変える</strong> — <code>count = count + 1;</code></li>
+          <li><strong>画面を描き直す</strong> — <code>showCount();</code></li>
+        </ol>
+        <p>
+          <small>
+            ② と ③ は<strong>別の仕事</strong>。「変数は変わったのに画面が変わらない」は、たいてい ③ の呼び忘れ。
+          </small>
+        </p>
+      </div>
+
+      <h2>今日のキーワード</h2>
+      <ul class="tags" aria-label="今日のキーワード">
+        <li>状態（state）</li>
+        <li>let（書き換わる変数）</li>
+        <li>表示更新関数</li>
+        <li>innerText</li>
+        <li>classList.add / remove / toggle</li>
+        <li>真偽値の反転（!）</li>
+        <li>input の .value</li>
+        <li>trim()</li>
+        <li>検証（バリデーション）</li>
+        <li>早めに return</li>
+      </ul>
+
+      <h2>授業スライド（講師用）</h2>
+      <p>
+        <a href="./slides/index.html">第4回 スライド（Reveal.js / ブラウザ全画面）</a>
+        — 授業進行用。矢印キー／スペースで進む、<code>S</code> キーでスピーカーノート表示。
+      </p>
+
+      <h2>練習問題</h2>
+      <ol class="practices">
+        <li>
+          <a href="./practice-01-counter/index.html">練習1: カウンター</a>
+          — <code>count</code> を状態として持ち、<code>showCount()</code> で画面に映す
+        </li>
+        <li>
+          <a href="./practice-02-toggle/index.html">練習2: トグル（開く / 閉じる）</a>
+          — <code>isOpen</code> と <code>classList.toggle</code> で表示 / 非表示を切り替える
+        </li>
+        <li>
+          <a href="./practice-03-form/index.html">練習3: センサー登録フォーム</a>
+          <span class="badge">今日の総合問題</span>
+          — <code>checkInput(text)</code> で空入力をはじき、<code>registeredCount</code> を増やす
+        </li>
+      </ol>
+      <p>
+        <small>
+          ※ 今日は<strong>練習3まで授業内で取り組む</strong>。時間内に終わらなかった人は、
+          続きを家でやって同じブランチで提出する。
+          全員共通の宿題は<strong>練習1 のカウンターに「リセット」と「5 ずつ増やす」を足す</strong>拡張課題。
+        </small>
+      </p>
+
+      <h2>うまく動かないときは</h2>
+      <ul>
+        <li>ブラウザで <code>F12</code>（または <code>⌘ + Option + I</code>）で DevTools を開き、<strong>Console タブ</strong>を見る</li>
+        <li>数が増えない → <code>console.log(count)</code> で確認。値が変わっているなら<strong>画面更新の呼び忘れ</strong></li>
+        <li>クリックのたびに 0 に戻る → <code>let count = 0;</code> をイベントの関数の<strong>中</strong>に書いていないか（Arduino の <code>loop()</code> の中に置いたのと同じ状態）</li>
+        <li><code>classList.toggle</code> に渡すのは <code>"hidden"</code>。CSS の <code>.</code> は付けない</li>
+        <li>入力欄の文字が取れない → <code>&lt;input&gt;</code> だけは <code>innerText</code> ではなく <code>.value</code></li>
+        <li>赤い文字のエラーはそのまま読む（英語でも OK。分からない単語だけ調べる）</li>
+      </ul>
+
+      <h2>生徒用ノート</h2>
+      <p>
+        今日の内容のまとめ: <a href="./student-note.md">student-note.md</a>
+        <br />
+        <small>
+          ※ このファイルは Markdown（マークダウン）という書式で書かれている。
+          ブラウザで開くと文字がそのまま見えるので、授業前に印刷した紙の方を見るか、
+          GitHub 上で開くと読みやすい表示になる。
+        </small>
+      </p>
+    </main>
+  </body>
+</html>

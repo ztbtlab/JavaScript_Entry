@@ -32,23 +32,40 @@ const minusButton = document.getElementById("minus"); // -1 ボタン
 //         仕事は 1 行だけ。count を countLabel.innerText に入れる
 function showCount() {
   // ここを書く
+  if (count >= 10) {
+  countLabel.style.color = "blue";
+  }else{
+    countLabel.style.color = "black";
+  }
+
+
+  countLabel.innerText = count;
 }
 
 // TODO 2: plusButton がクリックされたら
 //         ① count を 1 増やす  ② showCount() を呼ぶ
 plusButton.addEventListener("click", () => {
   // ここを書く（2 つやる）
+  count ++;
+  showCount();
 });
 
 // TODO 3: minusButton がクリックされたら
 //         ① count を 1 減らす  ② showCount() を呼ぶ
 minusButton.addEventListener("click", () => {
   // ここを書く（2 つやる）
+  if (count > 0) {
+    count --;
+    showCount();
+  }
 });
 
 // TODO 4: 最初の表示のために showCount() を 1 回呼ぶ
 //         （画面は最初「-」。これが無いと、押すまでずっと「-」のままで状態とずれる）
 // ここを書く
+showCount();
+
+
 
 // ----- 余裕があれば拡張してみよう -----
 // ・0 より下にならないようにする（if (count > 0) のときだけ減らす）

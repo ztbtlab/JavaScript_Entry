@@ -100,7 +100,7 @@ button:hover {
 }
 
 /* エラーのときに入力欄へ付ける名札。枠が赤くなる */
-.error {
+input[type="text"].error {
   border-color: var(--color-danger);
 }
 

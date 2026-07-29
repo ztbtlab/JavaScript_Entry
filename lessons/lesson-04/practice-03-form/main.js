@@ -40,6 +40,7 @@ const countLabel = document.getElementById("count"); // 件数を映す場所
 //         registeredCount を countLabel.innerText に入れる（練習1 と同じ）
 function showCount() {
   // ここを書く
+  countLabel.innerText = registeredCount;
 }
 
 // TODO 2: checkInput(text) を完成させる
@@ -49,6 +50,14 @@ function showCount() {
 //         （あとで TODO 4 でこの関数に 2 行戻ってくる）
 function checkInput(text) {
   // ここを書く
+      sensorInput.classList.toggle("error", text === "");
+  if (text === "") {
+    errorMessage.innerText = "センサー名を入力してください";
+    return false;
+  }else{
+  errorMessage.innerText = "";
+  return true;
+  }
 }
 
 submitButton.addEventListener("click", () => {
@@ -59,6 +68,14 @@ submitButton.addEventListener("click", () => {
   //   ④ showCount() を呼ぶ
   //   ⑤ sensorInput.value = "" で入力欄を空に戻す
   // ここを書く
+  const text = sensorInput.value.trim();
+  if (checkInput(text) === false) {
+    return;
+  }else{
+  registeredCount++;
+  }
+  showCount();
+  sensorInput.value = "";
 });
 
 // TODO 4: エラーのとき入力欄の枠を赤くする
@@ -66,9 +83,11 @@ submitButton.addEventListener("click", () => {
 //         （第 2 引数が true なら付ける、false なら外す。練習2 の classList の応用）
 //         → TODO 2 で書いた checkInput に 2 行足す形になる
 
+
 // TODO 5: 最初の表示のために showCount() を 1 回呼ぶ
 //         （画面は最初「-」。これが無いと、登録するまでずっと「-」のまま）
 // ここを書く
+showCount();
 
 // ----- 余裕があれば拡張してみよう -----
 // ・登録したセンサー名を配列にためて、画面に一覧表示する（第3回の map / join が使える）

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>練習1: カウンターを 3 つのファイルに分ける</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <p><a href="../index.html">← 第5回トップに戻る</a></p>
+
+      <h1>練習1: カウンターを 3 つのファイルに分ける</h1>
+      <p>
+        第4回で作ったカウンター（＋リセット）が、いまは <code>main.js</code> 1 つに全部入っている。
+        これを <code>logic.js</code>（計算担当）と <code>ui.js</code>（画面担当）に分けて、
+        <strong>分ける前とまったく同じ動き</strong>にするのが今日の練習。
+        <strong>動きが変わらないのが正解</strong>。
+      </p>
+
+      <div class="counter">
+        <!-- 数を出す場所。JS からは countLabel という名前で扱う -->
+        <span class="counter-value" id="count" aria-live="polite">0</span>
+        <div class="buttons">
+          <button id="plus" type="button">＋1</button>
+          <button id="minus" type="button">−1</button>
+          <button id="reset" type="button">リセット</button>
+        </div>
+      </div>
+
+      <div class="warn">
+        <p><strong>⚠️ Live Server で開くこと</strong></p>
+        <p>
+          <code>import</code> を使うページは、<code>index.html</code> をダブルクリックして開くと
+          動かない（アドレスが <code>file://</code> になっている状態）。
+          VS Code で <code>index.html</code> を右クリック →
+          <strong>Open with Live Server</strong> で開き、アドレスが
+          <code>http://127.0.0.1:5500/...</code> になっていることを確認しよう。
+        </p>
+      </div>
+
+      <div class="note">
+        <p><strong>進め方（一気に全部移さない。1 つ移して動かす → 次を移す）</strong></p>
+        <ol>
+          <li>
+            <code>logic.js</code> に <code>increment</code> を 1 つだけ移す →
+            <code>main.js</code> から <code>import</code> して ＋1 が動くか確かめる
+            （TODO 1・3）
+          </li>
+          <li>動いたら <code>decrement</code> / <code>reset</code> も同じように移す</li>
+          <li>
+            画面の書き換えを <code>ui.js</code> の <code>showCount(value)</code> に移す（TODO 2）
+          </li>
+          <li>下の <code>&lt;script&gt;</code> に <code>type="module"</code> を足す（TODO 4）</li>
+        </ol>
+        <p>詳しい手順とヒントは <code>README.md</code> にある。</p>
+      </div>
+    </main>
+
+    <!--
+      TODO 4: import を使えるようにする 1 つの属性を、下の <script> に足す
+              ヒント: type="____"（README とノートの「今日の最重要の 1 行」を見る）
+              ※ 分ける前（いまの main.js）はこのままでも動く。
+                 import を書いたとたんにエラーになるので、そのときに足す。
+    -->
+    <script src="main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>練習2: ブランチを切って PR を出す</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <p><a href="../index.html">← 第5回トップに戻る</a></p>
+
+      <h1>練習2: ブランチを切って PR を出す</h1>
+      <p>
+        <strong>今日の本命。</strong> 書き換えるコードは <code>profile.js</code> の
+        <strong>1 行だけ</strong>で、目的は
+        <strong>「枝を作る → 直す → commit → push → PR → レビュー対応 → マージ」を
+        自分の手で 1 周させる</strong>こと。
+      </p>
+
+      <div class="card">
+        <p>わたしの好きなもの</p>
+        <span class="card-value" id="favorite">（ここに profile.js の中身が出る）</span>
+      </div>
+
+      <div class="note">
+        <p><strong>やること</strong></p>
+        <ol>
+          <li><code>steps.md</code> の <code>____</code> を埋めながら、上から順に実行する</li>
+          <li>
+            <code>profile.js</code> の <code>favoriteThing</code> を自分の好きなものに書き換える
+          </li>
+          <li>GitHub で PR を作り、講師のレビューに 1 回対応する</li>
+        </ol>
+        <p>
+          <code>index.html</code> と <code>main.js</code> は完成済み。<strong>読むだけ</strong>でよい。
+        </p>
+      </div>
+
+      <div class="warn">
+        <p><strong>⚠️ 2 つの注意</strong></p>
+        <ul>
+          <li>
+            <strong>Live Server で開くこと。</strong> ダブルクリック（<code>file://</code>）では
+            <code>import</code> が動かない
+          </li>
+          <li>
+            <strong>このリポジトリは Public。</strong> <code>profile.js</code> に書くのは
+            「好きなもの」。<strong>名前・学校名・住所は書かない</strong>。
+            コミットメッセージや PR の文章も同じ
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>

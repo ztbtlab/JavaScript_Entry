@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第5回: モジュール分割と PR</title>
+    <style>
+      /* 最小限の見やすさ優先スタイル（色は CSS 変数でまとめる） */
+      :root {
+        --bg: #f7f7f7;
+        --panel: #fff;
+        --ink: #222;
+        --accent: #2b6cb0;
+        --accent-ink: #1a4b80;
+        --accent-weak: #eef2f7;
+        --tag-bg: #e6f0fb;
+        --badge-bg: #fde68a;
+        --badge-ink: #8a5a00;
+        --warn-bg: #fff4e5;
+        --warn-ink: #8a5a00;
+        --radius: 8px;
+      }
+      body {
+        font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        margin: 0;
+        padding: 2rem 1rem;
+        line-height: 1.7;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        background: var(--panel);
+        padding: 1.5rem 2rem;
+        border-radius: var(--radius);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        border-bottom: 3px solid var(--accent);
+        padding-bottom: 0.3rem;
+      }
+      h2 {
+        margin-top: 2rem;
+        color: var(--accent);
+      }
+      ol.practices li {
+        margin-bottom: 0.8rem;
+      }
+      code {
+        background: var(--accent-weak);
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.95em;
+      }
+      ul.tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+        padding: 0;
+        list-style: none;
+      }
+      ul.tags li {
+        background: var(--tag-bg);
+        color: var(--accent-ink);
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.9rem;
+      }
+      .badge {
+        display: inline-block;
+        background: var(--badge-bg);
+        color: var(--badge-ink);
+        padding: 0.1rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        margin-left: 0.3rem;
+      }
+      .warn {
+        background: var(--warn-bg);
+        color: var(--warn-ink);
+        border-radius: 6px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>第5回: モジュール分割と PR</h1>
+      <p>
+        今日のゴールは 2 つ。1 つめは、1 つのファイルに全部書いていたコードを
+        <strong>役割ごとに別ファイルへ分ける</strong>こと（<code>export</code> と <code>import</code>）。
+        2 つめは、<strong>自分でブランチ（枝）を作って PR（プルリクエスト）を出す</strong>こと。
+        新しい文法は少なめで、<strong>手順を自分の手で 1 周させる</strong>のが今日の主役。
+      </p>
+
+      <h2>今日のキーワード</h2>
+      <ul class="tags" aria-label="今日のキーワード">
+        <li>モジュール（module）</li>
+        <li>export（貸し出す）</li>
+        <li>import（借りてくる）</li>
+        <li>type="module"</li>
+        <li>logic.js（計算担当）</li>
+        <li>ui.js（画面担当）</li>
+        <li>main.js（司令塔）</li>
+        <li>Live Server</li>
+        <li>ブランチ（枝）</li>
+        <li>PR（プルリクエスト）</li>
+        <li>レビュー</li>
+        <li>マージ</li>
+      </ul>
+
+      <div class="warn">
+        <p><strong>⚠️ 今日は「ダブルクリックで開く」と動かない</strong></p>
+        <p>
+          <code>import</code> を使ったページは、<code>index.html</code> をダブルクリックして開くと
+          エラーになる（アドレスが <code>file://</code> で始まる状態）。
+          必ず VS Code で <code>index.html</code> を右クリック →
+          <strong>Open with Live Server</strong> で開くこと。
+          アドレスが <code>http://127.0.0.1:5500/...</code> になっていれば OK。
+        </p>
+      </div>
+
+      <h2>授業スライド（講師用）</h2>
+      <p>
+        <a href="./slides/index.html">第5回 スライド（Reveal.js / ブラウザ全画面）</a>
+        — 授業進行用。矢印キー／スペースで進む、<code>S</code> キーでスピーカーノート表示。
+      </p>
+
+      <h2>練習問題</h2>
+      <ol class="practices">
+        <li>
+          <a href="./practice-01-modules/index.html">練習1: カウンターを 3 つのファイルに分ける</a>
+          — <code>logic.js</code> / <code>ui.js</code> / <code>main.js</code> と <code>export</code> / <code>import</code>
+        </li>
+        <li>
+          <a href="./practice-02-branch-pr/index.html">練習2: ブランチを切って PR を出す</a>
+          — <code>git switch -c</code> → <code>commit</code> → <code>push</code> → PR → レビュー →
+          マージ（<strong>今日の本命</strong>）
+        </li>
+        <li>
+          <a href="./practice-03-quiz/index.html">練習3: 三択クイズをモジュール分割で作る</a>
+          <span class="badge">発展 / 宿題</span>
+          — <code>questions</code> / <code>judge</code> / <code>showQuestion</code> / <code>showResult</code>
+        </li>
+      </ol>
+      <p>
+        <small>
+          ※ 練習3 は<strong>発展課題</strong>。授業内は練習1・2を進め、早く終わった人だけ練習3に進む。
+          練習3は全員、宿題として家で取り組み、<strong>自分で切ったブランチから PR で提出</strong>する。
+        </small>
+      </p>
+
+      <h2>今日からの提出のしかた（第2〜4回との違い）</h2>
+      <ul>
+        <li>
+          第2〜4回: 講師が用意した <code>answer/lesson-0X-YY-*</code> ブランチに提出していた
+        </li>
+        <li>
+          <strong>第5回から: 自分で <code>feature/...</code> ブランチを作って、PR で提出する</strong>
+        </li>
+        <li>
+          <code>answer/*</code> ブランチと各練習の <code>answer/</code> フォルダは
+          <strong>講師の模範解答置き場</strong>。見てもよいが、そこに提出はしない
+        </li>
+        <li>⚠️ <code>main</code> ブランチと <code>answer/*</code> ブランチは消さないこと</li>
+      </ul>
+      <p>
+        <strong>このリポジトリは Public（世界中から見える）</strong>。
+        コミットメッセージ・PR のタイトル・説明に、
+        <strong>本名・学校名・住所などは書かない</strong>。
+      </p>
+
+      <h2>うまく動かないときは（この順で確認）</h2>
+      <ol>
+        <li>
+          <strong>アドレス欄</strong>が <code>http://127.0.0.1:...</code> になっているか
+          （<code>file://</code> なら Live Server で開き直す）
+        </li>
+        <li>
+          <code>index.html</code> の <code>&lt;script&gt;</code> に
+          <code>type="module"</code> が付いているか
+        </li>
+        <li>
+          <code>F12</code>（Mac は <code>⌘ + Option + I</code>）で DevTools を開き、
+          <strong>Console のエラー 1 行目</strong>を読む
+        </li>
+        <li>
+          <code>import { 名前 } from "./logic.js";</code> の
+          <strong>波カッコ</strong>・<strong><code>./</code></strong>・<strong><code>.js</code></strong>
+          の 3 つが揃っているか
+        </li>
+        <li>借りてくる側だけでなく、<strong>貸し出す側に <code>export</code></strong> が付いているか</li>
+      </ol>
+
+      <h2>生徒用ノート</h2>
+      <p>
+        今日の内容のまとめ: <a href="./student-note.md">student-note.md</a>
+        <br />
+        <small>
+          ※ このファイルは Markdown（マークダウン）という書式で書かれている。
+          ブラウザで開くと文字がそのまま見えるので、授業前に印刷した紙の方を見るか、
+          GitHub 上で開くと読みやすい表示になる。
+        </small>
+      </p>
+    </main>
+  </body>
+</html>

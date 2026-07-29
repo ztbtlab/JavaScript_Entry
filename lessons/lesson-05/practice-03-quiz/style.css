@@ -1,0 +1,124 @@
+/* 練習3 の見た目。ここは触らなくてよい（色は CSS 変数でまとめてある）
+   余裕があれば色や大きさを変えて、自分のクイズらしくしてもよい */
+:root {
+  --bg: #f7f7f7;
+  --panel: #fff;
+  --ink: #222;
+  --accent: #2b6cb0;
+  --accent-weak: #eef2f7;
+  --ok: #1a7f4b;
+  --ng: #b03030;
+  --warn-bg: #fff4e5;
+  --warn-ink: #8a5a00;
+  --radius: 8px;
+}
+
+body {
+  font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  padding: 2rem 1rem;
+  line-height: 1.7;
+}
+
+main {
+  max-width: 620px;
+  margin: 0 auto;
+  background: var(--panel);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  background: var(--accent-weak);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.note {
+  background: var(--accent-weak);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.warn {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+/* クイズ本体 */
+.quiz {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.question {
+  font-size: 1.4rem;
+  font-weight: bold;
+  display: block;
+  min-height: 2.4rem;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+
+button {
+  font-size: 1.1rem;
+  font-family: inherit;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid var(--accent);
+  background: var(--panel);
+  color: var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--accent-weak);
+}
+
+button:disabled {
+  border-color: #bbb;
+  color: #999;
+  cursor: default;
+}
+
+.result {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-height: 1.8rem;
+  margin-top: 1.2rem;
+}
+
+/* 正解・不正解の色分け（ui.js から class を付け替えて使ってもよい） */
+.result.ok {
+  color: var(--ok);
+}
+
+.result.ng {
+  color: var(--ng);
+}
+
+.next {
+  margin-top: 1rem;
+}

@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第5回 モジュール分割と PR</title>
+
+    <!-- Reveal.js core + theme (white) + highlight (monokai) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/white.css" id="theme" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/monokai.css" id="highlight-theme" />
+
+    <style>
+      :root {
+        /* 後列からも見える字サイズを CSS 変数で統一 */
+        --base-font-size: 30px;
+        --title-scale: 1.8;
+        --title-slide-scale: 2.2;
+        --h1-size: calc(var(--base-font-size) * var(--title-scale));
+        --h2-size: calc(var(--base-font-size) * 1.4);
+        --h3-size: calc(var(--base-font-size) * 1.15);
+        --code-size: calc(var(--base-font-size) * 0.9);
+        --diagram-size: calc(var(--base-font-size) * 0.62);
+        --small-size: calc(var(--base-font-size) * 0.75);
+        --accent: #c0392b;
+        --accent-weak: #f6ece9;
+        --ink: #222;
+        --sub-ink: #555;
+        --rule: #ddd;
+        --section-gap: calc(var(--base-font-size) * 0.6);
+        --list-gap: calc(var(--section-gap) / 2);
+      }
+
+      .reveal,
+      .reveal .slides,
+      .reveal .slides section,
+      .reveal p,
+      .reveal li,
+      .reveal td,
+      .reveal th {
+        font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+        color: var(--ink);
+      }
+
+      .reveal .slides {
+        font-size: var(--base-font-size);
+        text-align: left;
+      }
+
+      .reveal h1 {
+        font-size: var(--h1-size);
+        line-height: 1.25;
+        margin-bottom: var(--section-gap);
+        color: var(--ink);
+        text-transform: none;
+      }
+
+      .reveal h2 {
+        font-size: var(--h2-size);
+        line-height: 1.25;
+        margin-bottom: var(--section-gap);
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: calc(var(--section-gap) / 2);
+        text-transform: none;
+      }
+
+      .reveal h3 {
+        font-size: var(--h3-size);
+        line-height: 1.3;
+        text-transform: none;
+      }
+
+      .reveal p,
+      .reveal li {
+        line-height: 1.5;
+      }
+
+      .reveal ul,
+      .reveal ol {
+        display: block;
+        margin-left: calc(var(--base-font-size) * 1.2);
+      }
+
+      .reveal li + li {
+        margin-top: var(--list-gap);
+      }
+
+      .reveal code {
+        font-size: var(--code-size);
+        background: var(--accent-weak);
+        color: var(--accent);
+        padding: 0 calc(var(--code-size) * 0.25);
+        border-radius: 4px;
+      }
+
+      .reveal pre {
+        width: 100%;
+        box-shadow: none;
+        font-size: var(--code-size);
+      }
+
+      .reveal pre code {
+        background: #272822;
+        color: #f8f8f2;
+        padding: calc(var(--code-size) * 0.8);
+        border-radius: 6px;
+        max-height: none;
+      }
+
+      /* 流れ図など、行数の多い図版は 1 枚に収まるよう小さめに組む */
+      .reveal pre.diagram {
+        font-size: var(--diagram-size);
+      }
+
+      .reveal pre.diagram code {
+        padding: calc(var(--diagram-size) * 0.8);
+        line-height: 1.35;
+      }
+
+      .reveal table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: calc(var(--base-font-size) * 0.85);
+      }
+
+      .reveal table th,
+      .reveal table td {
+        border: 1px solid var(--rule);
+        padding: calc(var(--base-font-size) * 0.35) calc(var(--base-font-size) * 0.5);
+        vertical-align: top;
+      }
+
+      .reveal table th {
+        background: var(--accent-weak);
+        color: var(--accent);
+      }
+
+      .reveal a {
+        color: var(--accent);
+        text-decoration: underline;
+      }
+
+      .reveal .slides section.title-slide h1 {
+        font-size: calc(var(--base-font-size) * var(--title-slide-scale));
+        border: none;
+      }
+
+      .reveal .slides section.title-slide {
+        text-align: center;
+      }
+
+      .reveal .slides section.title-slide ul {
+        display: inline-block;
+        text-align: left;
+      }
+
+      .sub {
+        color: var(--sub-ink);
+        font-size: var(--small-size);
+      }
+
+      .reveal ul.tags {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(var(--base-font-size) * 0.3);
+        margin-top: var(--section-gap);
+      }
+
+      .reveal ul.tags li {
+        background: var(--accent-weak);
+        color: var(--accent);
+        padding: 0 calc(var(--base-font-size) * 0.4);
+        border-radius: 4px;
+        font-size: var(--small-size);
+        margin-top: 0;
+      }
+
+      .spacer {
+        display: block;
+        height: var(--section-gap);
+      }
+
+      .reveal blockquote {
+        width: 100%;
+        background: var(--accent-weak);
+        border-left: 6px solid var(--accent);
+        padding: calc(var(--base-font-size) * 0.5) calc(var(--base-font-size) * 0.8);
+        font-style: normal;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- 1. 表紙 -->
+        <section data-markdown class="title-slide">
+          <textarea data-template>
+            # 第5回 モジュール分割と PR
+            ## ファイルを分ける・ブランチから PR を出す
+
+            - 所要時間: **2 時間**
+            - 今日の練習: **2 問 ＋ 発展1問（宿題）**
+            - **講座前半のマイルストーン回**
+
+            Note:
+            第1回から第4回までで「ブラウザで動く小アプリ」は作れるようになった。今日はそれを「人に見せて取り込んでもらう」ところまで進める節目の回。新しい文法は少ない代わりに、手順を自分の手で 1 周させるのが主役だと最初に宣言する。緊張している子には「今日は覚えることより、やってみる回」と一言。
+          </textarea>
+        </section>
+
+        <!-- 2. 今日のゴール -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 今日のゴール
+
+            1. 1 つの `main.js` を **`logic.js`（計算）/ `ui.js`（画面）/ `main.js`（司令塔）** に分けられる
+            2. **`export` / `import`** と **`<script type="module">`** を書ける
+            3. **自分でブランチ（枝）を作って PR を出せる**
+            4. 講師のレビューに **1 回対応して push** できる
+
+            > 🏁 **今日は講座前半のマイルストーン。**
+            > 「PR を 1 本出せた」で今日は合格。
+
+            Note:
+            ゴール3・4 がマイルストーン判定。ここを最優先だと最初に明言しておく。練習1（分割）が終わらない子がいても、練習2 には全員を必ず乗せる。「全員が PR を 1 本出す」を今日の合言葉にする。
+          </textarea>
+        </section>
+
+        <!-- 3. 前回の振り返り -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 前回の振り返り（口頭クイズ＋宿題紹介）
+
+            - 宿題（カウンターに **リセット** と **5 ずつ増やす** を追加）を **1 人 1 分** で紹介
+            - 「**状態**」って何のことだった？
+            - ボタンを押してから画面が変わるまでに、何が起きている？
+            - 第3回の**関数**は何のためだった？
+
+            <span class="sub">※ 15 分を超えない。宿題が出せていなくても責めない。</span>
+
+            Note:
+            答えの目安。状態＝いまの値を覚えている変数（カウンターなら count）。押してから画面が変わるまで＝状態を更新 → 画面に反映。関数＝処理に名前を付けて使い回す。第4回のカウンター main.js を投影して「1 ファイルに全部入っているね」と確認させ、そのまま今日の入り口へつなぐ。
+          </textarea>
+        </section>
+
+        <!-- 4. なぜ分ける？ -->
+        <section data-markdown>
+          <textarea data-template>
+            ## なぜファイルを分ける？
+
+            前回のカウンター `main.js` には、**2 種類の仕事**が混ざっている。
+
+            - **計算の仕事**: `count + 1` を作る / 0 に戻す
+            - **画面の仕事**: `document.getElementById(...)` / `innerText` を書き換える
+
+            <span class="sub">考えることが別なら、ファイルも別にしよう。</span>
+
+            > 🔧 Arduino で言うと…
+            > スケッチが長くなると、**センサーを読む部分**と **LED を光らせる部分**が
+            > ごちゃ混ぜになって、どこを直せばいいか分からなくなる。あれと同じ。
+
+            Note:
+            第4回 practice-01-counter の main.js を投影し、計算の行と画面の行を色分けしながら読む。「これがあと 10 倍長くなったら、直したい場所を探せる？」と問いかけてから次のスライドへ。文法（export / import）はまだ出さない。動機づけを先に。
+          </textarea>
+        </section>
+
+        <!-- 5. 分けると嬉しいこと / 3 つの箱 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 今日は「3 つの箱」に分ける
+
+            ```
+                        main.js（司令塔）
+                     let count = 0;  状態はここ
+                          │        │
+                 呼ぶ ←──┘        └──→ 呼ぶ
+                  │                        │
+            logic.js（計算）          ui.js（画面）
+            document を書かない        計算をしない
+            ```
+
+            **分けると嬉しいこと 3 つ**
+
+            1. 直したい場所をすぐ探せる
+            2. 計算だけ取り出して確認できる（画面が無くても試せる）
+            3. 何人かで作るとき、**別々のファイルを担当できる** → 今日の後半の PR につながる
+
+            Note:
+            ホワイトボードにも同じ 3 つの箱を描き、main.js から両方へ矢印を伸ばす。矢印の向き（main が呼ぶ側）を強調。Arduino 類推:「センサーを読む関数」「LED を光らせる関数」を loop() が呼ぶ構造と同じ。main.js が loop() に相当する。嬉しいこと 3 つめが後半の伏線。
+          </textarea>
+        </section>
+
+        <!-- 6. logic.js -->
+        <section data-markdown>
+          <textarea data-template>
+            ## logic.js（計算担当）
+
+            `export` を付けると「**他のファイルに貸し出す**」印になる。
+
+            ```js
+            // logic.js — 計算だけ。画面のことは何も知らない
+            ______ function increment(count) {
+              return count ____ 1;
+            }
+
+            ______ function decrement(count) { ... }
+            ______ function reset() { ... }   // 引数はいらない
+            ```
+
+            <span class="sub">目印: `logic.js` に `document` が **1 回も出てこない**。出てきたら分け方を間違えている合図。</span>
+
+            Note:
+            引数で今の値を受け取り、return で新しい値を返す＝第3回の関数の形そのまま。reset に引数がいらない理由（いまの値を使わず 0 を返すだけ）は必ず口頭で確認する。穴は生徒に当てて答えさせてよいが、コードは練習1 で自分の手で書かせる。ここでは打ち込ませない。
+          </textarea>
+        </section>
+
+        <!-- 7. ui.js -->
+        <section data-markdown>
+          <textarea data-template>
+            ## ui.js（画面担当）
+
+            ```js
+            // ui.js — 画面に出すことだけ。計算はしない
+            const countLabel = document.getElementById("_____");
+
+            ______ function showCount(value) {
+              countLabel.innerText = _____; // 渡された値を映すだけ
+            }
+            ```
+
+            > ⚠️ **第4回からの変化**
+            > 前回の `showCount()` は**引数なし**で、外の `count` を直接読んでいた。
+            > 分けると `count` は別ファイル。だから **`showCount(value)`** と引数で受け取る。
+
+            <span class="sub">`count` は**数そのもの**、`countLabel` は**数を出す場所**。名前が似ているので注意。</span>
+
+            Note:
+            今日いちばん質問が出るところ。「ファイルをまたぐときは、変数を直接見ずに引数で渡す」が今日の考え方だと言い切る。画面に undefined が出たら showCount() を引数なしで呼んでいる合図、と先に予告しておくと巡回が楽になる。id="count" と変数 countLabel の使い分けもここで 1 回押さえる。
+          </textarea>
+        </section>
+
+        <!-- 8. main.js -->
+        <section data-markdown>
+          <textarea data-template>
+            ## main.js（司令塔）
+
+            ```js
+            ______ { increment, decrement, reset } from "____logic.js";
+            ______ { showCount } from "./ui.___";
+
+            let count = 0; // 状態はここが持つ（第4回と同じ）
+
+            plusButton.addEventListener("click", () => {
+              count = increment(count); // 計算は logic に頼む
+              showCount(count);         // 画面は ui に頼む
+            });
+            ```
+
+            <span class="sub">`import { 名前 } from "./ファイル名.js";` — **波カッコ**・**`./`**・**`.js`** の 3 つを忘れやすい。</span>
+
+            Note:
+            「export で貸し出して、import で借りてくる」と言い換える。状態（let count = 0;）は分けたあとも main.js が持つ、logic.js には置かない、を強調。−1 とリセットも同じ形になることは口頭で補う（スライドには載せず、練習1 で自分で書かせる）。
+          </textarea>
+        </section>
+
+        <!-- 9. type="module" -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 今日の最重要の 1 行
+
+            ```html
+            <!-- これまで -->
+            <script src="main.js"></script>
+
+            <!-- 今日から -->
+            <script ____="______" src="main.js"></script>
+            ```
+
+            - これを付けて**初めて `import` が使えるようになる**
+            - 忘れると、`import` の行でエラーになる
+            - `defer` と同じく「HTML を読み終わってから実行」→ **`defer` は書かなくてよい**
+
+            <span class="sub">合言葉: **「`import` を書いたら `type="module"`」はセット**。</span>
+
+            Note:
+            この 1 行は板書に残したまま授業を進める（講師用チェックリスト）。練習1 の index.html の TODO 4 がまさにここ。分ける前の main.js はこの属性が無くても動くので、import を書いた瞬間に必要になる、という順番を説明しておくと生徒が納得しやすい。
+          </textarea>
+        </section>
+
+        <!-- 10. file:// の落とし穴 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## ⚠️ ダブルクリックで開くと動かない
+
+            `index.html` をダブルクリック（アドレスが `file://`）で開くと、Console にこれが出る。
+
+            ```
+            Access to script at 'file:///.../logic.js' from origin 'null'
+            has been blocked by CORS policy
+            ```
+
+            - ブラウザが安全のため、**ファイルを直接開いた状態では別ファイルの読み込みを禁止**している
+              （**CORS**＝コルス。読んでよいか決めるブラウザの安全ルール）
+            - **必ず Live Server で開く**: `index.html` を右クリック → **Open with Live Server**
+            - アドレスが `http://127.0.0.1:5500/...` になっていれば OK
+
+            Note:
+            ここは**わざと一度 file:// で開いてエラーを見せる**。「このエラーが出たら Live Server で開き直す」を体で覚えさせるのが、後半の質問対応を減らす近道。CORS の中身は深追いしない。中2にはここまでで十分。授業前に全員の VS Code に Live Server 拡張が入っているかも確認しておく。
+          </textarea>
+        </section>
+
+        <!-- 11. モジュールの中は外から見えない -->
+        <section data-markdown>
+          <textarea data-template>
+            ## もう 1 つの変化: 中の変数は外から見えない
+
+            `type="module"` にすると、そのファイルで作った変数は**ファイルの中だけのもの**になる。
+
+            ```js
+            // DevTools の Console に count と打つと…
+            Uncaught ReferenceError: count is not defined
+            ```
+
+            - これまでは Console から見えていた。**これで正常**
+            - 中身を見たいときは、コードの中に `console.log(count);` を書く
+            - 不便なのではなく**安全のため**（他のファイルと名前がぶつからない）
+
+            Note:
+            第4回まで Console で count を直接叩いて確認していた子が必ず混乱する。「壊れたのではなく仕様」と先に言っておく。console.log を書いて確かめる習慣は Arduino の Serial.println と同じ、と結びつけると通じる。
+          </textarea>
+        </section>
+
+        <!-- 12. 板書キーワード（前半） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 前半の板書キーワード
+
+            ```
+            1 ファイルに全部 → 役割で分ける
+              logic.js = 計算（document を書かない）
+              ui.js    = 画面（計算しない）
+              main.js  = 状態を持ち、2 つをつなぐ司令塔
+
+            export function 名前() {...}          ← 貸し出す
+            import { 名前 } from "./logic.js";    ← 借りてくる（./ と .js）
+
+            <script type="module" src="main.js"></script>  ← 無いと import 不可
+            file:// で開くと動かない → Live Server（http://127.0.0.1:5500/...）
+            ```
+
+            Note:
+            このブロックは板書に残し、練習1 の間ずっと参照させる。生徒用ノート（student-note.md）の 1〜3 節と同じ内容。ここから演習なので、詰まったらこのページに戻る合図にする。
+          </textarea>
+        </section>
+
+        <!-- 13. 練習1 問題 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習1: カウンターを 3 つのファイルに分ける
+
+            [practice-01-modules](../practice-01-modules/) を開く
+
+            - 配布の `main.js` は **そのままでも動く**。まず Live Server で開いて
+              ＋1 / −1 / リセットが効くことを確かめてから分け始める
+            - **完成条件: 分ける前とまったく同じ動き**。**動きが変わらないのが正解**
+
+            <ul class="tags" aria-label="キーワード">
+              <li>increment</li>
+              <li>decrement</li>
+              <li>reset</li>
+              <li>showCount</li>
+              <li>export / import</li>
+            </ul>
+
+            Note:
+            「動きが変わらないのが正解」は必ず声に出す。見た目が変わらないので達成感が薄い子がいる。まず動くことを確認してから壊す（分ける）という順番を守らせると、失敗したときに戻れる。ボタンは 3 つ固定。「5 ずつ増やす」は発展扱いで配布ファイルには入っていない。
+          </textarea>
+        </section>
+
+        <!-- 14. 練習1 ヒント -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習1 ヒント（一気に全部移さない）
+
+            1. **`logic.js` に `increment` を 1 つだけ**移す → `import` して ＋1 が動くか確かめる（TODO 1・3）
+            2. 動いたら `decrement` / `reset` も同じように移す
+            3. 画面の書き換えを `ui.js` の **`showCount(value)`** に移す（TODO 2）
+               <span class="sub">前回は引数なし。今回は**値を渡す形**</span>
+            4. `index.html` の `<script>` に `type="module"` を足す（TODO 4）
+            5. 仕上げに `logic.js` を読み返して `document` が無いか確かめる
+
+            <span class="sub">引っ越し**元**の行が `main.js` に残っていないかも確認（TODO 3-3）。二重にあると混乱のもと。</span>
+
+            Note:
+            main.js の TODO 3-1（import）・3-2（中身の書き換え）・3-3（引っ越し元を消す）に対応。「1 つ移して動かす → 次を移す」の順がいちばん早く終わる。早く終わった子には logic.js に incrementBy(count, amount) を足して「5 ずつ増やす」ボタンを付ける発展を渡す。
+          </textarea>
+        </section>
+
+        <!-- 15. 巡回チェック 3 点 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 動かない！ と思ったら、この 3 つ
+
+            1. **アドレス欄**が `http://127.0.0.1:...` になっている？
+               （`file://` なら Live Server で開き直す）
+            2. `<script>` に **`type="module"`** が付いている？
+            3. **Console のエラー 1 行目**を読む（全部読まなくていい）
+
+            <span class="spacer"></span>
+
+            <span class="sub">この 3 つで大半は解決する。それでもダメなら講師を呼ぶ。</span>
+
+            Note:
+            巡回時もこの順で確認する。生徒には「エラーは全部読まなくていい、1 行目だけ教えて」と徹底させると、質問対応が一気に速くなる。ここまでで 1 時間。休憩を挟んで後半の PR 実習へ。
+          </textarea>
+        </section>
+
+        <!-- 16. 休憩 -->
+        <section data-markdown class="title-slide">
+          <textarea data-template>
+            # 休憩 10 分
+
+            後半は **ブランチと PR**。
+
+            <span class="sub">戻ってきたら、VS Code で GitHub にサインインできているか確認します。</span>
+
+            Note:
+            休憩中に、講師は生徒 PC の GitHub サインイン状態（VS Code 左下のアカウントアイコン）を一巡して確認しておく。ここで詰まりを潰しておかないと、後半の 20 分がまるごと認証で溶ける。
+          </textarea>
+        </section>
+
+        <!-- 17. なぜブランチ？ -->
+        <section data-markdown>
+          <textarea data-template>
+            ## なぜブランチ（枝）を使う？
+
+            - `main`（本線）は「**いつでもちゃんと動く状態**」を保ちたい場所
+            - でも新しい機能を作っている途中は、動かない時間がある
+            - その途中経過を `main` に置きたくない
+
+            **ブランチ（枝）= 本線を壊さずに作業するためのコピー**
+
+            > 🔧 Arduino で言うと…
+            > **動いている回路はそのままにして、別のブレッドボードで試す**。
+            > うまくいったら本番の回路に反映する。
+
+            Note:
+            この Arduino 類推は講師用チェックリストの必須項目。1 回は口に出す。ここは文法ではなく手順の話なので、コマンドより先に「なぜそうするか」を通しておく。次のスライドの流れ図が後半の主役。
+          </textarea>
+        </section>
+
+        <!-- 18. 流れ図（板書に残す） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 流れは 1 枚の図で覚える
+
+            <pre class="diagram"><code>main（本線）
+  │
+  ├── ① 枝を作って乗り移る       git switch __ feature/lesson-05-xx
+  │      │
+  │      ├── ② 編集 → git ___ . → git commit -m "#__ ..."
+  │      │
+  │      └── ③ GitHub に送る     git push __ origin feature/lesson-05-xx
+  │                    │
+  │                    ↓
+  │              ④ GitHub で PR を作る（「見てください」の依頼）
+  │                    │
+  │                    ↓
+  │              ⑤ 講師がレビュー → コメント
+  │                    │
+  │                    ↓  直して commit → push（PR は自動で更新される）
+  │                    │
+  └────────────────── ⑥ Merge → git switch ____ / git ____
+</code></pre>
+
+            <span class="sub">📌 この図は**授業の終わりまで板書に残す**。詰まったら「いま図のどこ？」</span>
+
+            Note:
+            この図を板書し、最後まで消さない（講師用チェックリスト必須項目）。穴は steps.md と同じ位置に空けてある。答えを先に見せず、次のスライドのヒント枠で意味だけ渡す。巡回時は「いま図のどこにいる？」と聞くのが最短。同じ図が steps.md の「いま図のどこにいる？」にもある。
+          </textarea>
+        </section>
+
+        <!-- 19. コマンドは 3 つだけ -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 覚えるコマンドは 3 つだけ
+
+            ```bash
+            git switch __ feature/lesson-05-xx      # ① 枝を作って移動
+            git ___ .                                # ② 変更を選ぶ（第1回で既習）
+            git commit -m "#__ profile を更新"       # ② メッセージを付けて保存
+            git push __ origin feature/lesson-05-xx  # ③ GitHub に送る
+            ```
+
+            > **ヒント枠**（`steps.md` にも同じものがある）
+            > - `-c` … 「新しく作る」の印（**c**reate の c）。作るときだけ付ける
+            > - `-u` … 「この枝の送り先はここ」と教える印。**初回だけ**（2 回目以降は `git push` だけ）
+            > - `#__` … 練習2 の **Issue 番号**を入れる
+
+            <span class="sub">いまどの枝にいるかは `git branch`、または VS Code の左下でも見える。</span>
+
+            Note:
+            埋めるのは生徒の仕事。ここでは意味だけ渡し、答えは口で言わない。`git switch` は第1回で扱っていない新コマンドなので、名前だけは板書する。ブランチ名の記号（xx）は講師が配る。Issue 番号も黒板に出しておく。
+          </textarea>
+        </section>
+
+        <!-- 20. PR とは -->
+        <section data-markdown>
+          <textarea data-template>
+            ## PR（プルリクエスト）って何？
+
+            日本語にすると「**この変更を本線に入れてください、という依頼**」。
+
+            - **タイトル**: 何をしたか 1 行
+            - **説明**: なぜ・どう変えたか（**2 行でいい**）
+            - 説明に `#XX`（Issue 番号）を書くと、その課題と自動でつながる
+            - PR は**メッセージのやり取りができる場所**。迷ったところを書いてよい
+
+            > ⚠️ このリポジトリは **Public（世界中から読める）**。
+            > PR のタイトル・説明・コミットメッセージに
+            > **本名・学校名・住所は書かない**。
+
+            Note:
+            Public リポの注意は、PR 作成前に必ず 1 回口に出す（講師用チェックリスト）。今回は生徒が初めて GitHub に文章を書く回。「書いた文章は消しても検索に残ることがある」まで言ってよい。PR の説明は「何を変えたか」「どこで迷ったか」の 2 行で十分だと安心させる。
+          </textarea>
+        </section>
+
+        <!-- 21. レビューと修正 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## レビュー → 直す → もう一度 push
+
+            - 講師がコメントを付ける。指摘は**ダメ出しではなく「もっと良くする提案」**
+            - 直したら、**同じブランチで** `commit` → `push` するだけ
+
+            > ❗ **PR は自動で最新になる。作り直さなくていい。**
+            > ここは全員が誤解するところ。
+
+            <span class="spacer"></span>
+
+            <span class="sub">これが「レビューの往復」。今日はこれを **1 回**体験するのがゴール。</span>
+
+            Note:
+            全員が誤解するので強調して 2 回言う。レビューコメントは短く、全員に 1 件ずつ。内容の良し悪しより往復の体験が目的。例:「favoriteThing の書き換えいいですね。コミットメッセージに Issue 番号 #XX を足してもう一度 push してみましょう」。
+          </textarea>
+        </section>
+
+        <!-- 22. マージと後片付け -->
+        <section data-markdown>
+          <textarea data-template>
+            ## マージと、そのあと
+
+            - **Merge** を押すと `main`（本線）に入る
+            - 手元の本線も最新にする
+
+            ```bash
+            git switch ____
+            git ____
+            ```
+
+            - マージ済みの `feature/...` ブランチは消してよい（GitHub に **Delete branch** ボタンが出る）
+
+            > ⚠️ **`main` と `answer/*` は消さない。**
+            > 本線と、講師の模範解答。
+
+            Note:
+            穴の答えは steps.md ⑧ と同じ（main / pull）。ヒント枠は前のスライドとノートにある。時間が押していれば、マージまで到達しなくてよい。PR が作られた時点でマイルストーン達成とし、レビュー対応とマージは宿題に回す。
+          </textarea>
+        </section>
+
+        <!-- 23. 提出ルールの変更 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## ⚠️ 今日から提出のしかたが変わる
+
+            | | 第2〜4回 | **第5回から** |
+            |---|---|---|
+            | 提出先 | 講師が用意した `answer/lesson-0X-YY-*` ブランチ | **自分で切った `feature/...` ブランチ + PR** |
+            | `answer/*` の役割 | 提出先 | **講師の模範解答置き場**（見てよいが提出には使わない） |
+
+            <span class="sub">各練習の `answer/` フォルダも同じ。模範解答であって、提出先ではない。</span>
+
+            Note:
+            ここを混同すると練習2 が成立しない。板書して残す。これまで answer/ ブランチに push していた習慣が残っている子がいるので、練習2 に入る前にもう一度確認する。answer/* と main を消さない注意もセットで。
+          </textarea>
+        </section>
+
+        <!-- 24. 練習2 問題 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習2: ブランチを切って PR を出す 🏁
+
+            [practice-02-branch-pr](../practice-02-branch-pr/) を開く
+
+            - **書き換えるのは `profile.js` の 1 行だけ**
+              （`favoriteThing` を自分の好きなものに）
+            - `steps.md` の `____` を埋めながら、**上から順に**実行する
+            - `index.html` と `main.js` は**完成済み・読むだけ**
+
+            > ⚠️ 書くのは「**好きなもの**」（部活・食べ物・センサー・ゲーム）。
+            > **名前・学校名・住所は書かない。**
+
+            Note:
+            今日の本命。まず講師が 1 周まるごと実演してから生徒に渡す（枝を切って 1 行直して push、PR を作り、自分でコメントを付けて、マージし、ブランチを消す。所要 5 分）。この実演の有無で成功率が大きく変わる。ブランチ名の記号（xx）と練習2 の Issue 番号を黒板に出しておく。
+          </textarea>
+        </section>
+
+        <!-- 25. 練習2 完成条件 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習2 の完成条件（この 4 つ）
+
+            1. `feature/lesson-05-xx` ブランチが **GitHub 上にある**
+            2. PR が作られていて、**base（取り込み先）が `main`**
+            3. PR の説明に **Issue 番号**が入っていて、**個人情報が書かれていない**
+            4. 講師のレビューコメントに **1 回対応して push** できた
+
+            <span class="spacer"></span>
+
+            <span class="sub">時間内にマージまで行かなくてよい。**PR が出せたら今日の目標は達成**。</span>
+
+            Note:
+            この 4 つを黒板に残し、終わった子から自己申告させる。全員が PR を 1 本出せたかを明示的に数える（この回のマイルストーン判定）。4 番目まで届かなかった子は宿題に回す。base の向き（左が取り込み先＝main、右が自分の枝）を間違える子が必ず出るので巡回で見る。
+          </textarea>
+        </section>
+
+        <!-- 26. 練習2 ヒント -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 練習2 ヒント
+
+            1. まず `git branch` で、**いまどの枝にいるか**見る。図のどこにいる？
+            2. エラーが出たら、**メッセージの 1 行目だけ**読んで教えて（全部読まなくていい）
+            3. push できたら GitHub の画面へ。黄色い帯に **Compare & pull request** ボタンが出ている
+            4. PR の説明は 2 行でいい。**「何を変えたか」「どこで迷ったか」**
+
+            > `steps.md` の **ヒント一覧**に、埋める部品が順不同で並んでいる。
+            > 「どれがどこに入るか」を考えるのが今日の練習。
+
+            Note:
+            詰まった子が出たタイミングでだけ映す。答えそのものは言わず、steps.md のヒント一覧に戻らせる。認証で止まっている子（ユーザー名とパスワードを聞かれる）は VS Code 左下からサインイン。パスワード認証は使えない仕組みだと説明する。
+          </textarea>
+        </section>
+
+        <!-- 27. つまずいたら -->
+        <section data-markdown>
+          <textarea data-template>
+            ## つまずいたら、まずここ
+
+            | 症状 | どうする |
+            |------|----------|
+            | CORS のエラーが出る | アドレスが `file://`。**Live Server で開き直す** |
+            | `import` の行でエラー | `<script>` に `type="module"` が無い |
+            | 画面に `undefined` | `showCount()` を**引数なし**で呼んでいる |
+            | 「そんな枝は無い」 | 新しく作るときは `-c` が要る |
+            | 「upstream が無い」 | 初回は `-u origin ブランチ名` を付ける |
+            | レビューが来た。作り直す？ | **作り直さない。** 同じ枝に push すれば自動で最新 |
+
+            Note:
+            前半・後半のつまずきを 1 枚にまとめてある。巡回で同じ症状が続いたら、このスライドを映して全体に共有する。import の波カッコ忘れ、./ 忘れ、.js 忘れ、export 忘れも頻出。logic.js に document を書いてしまった子は、練習1 の巡回で 1 回は指摘する。
+          </textarea>
+        </section>
+
+        <!-- 28. まとめ -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 今日のまとめ（3 行）
+
+            1. コードは**役割で分ける**。`logic.js`（計算）/ `ui.js`（画面）/ `main.js`（司令塔）。
+               貸し出すのが **`export`**、借りるのが **`import`**、使うには **`type="module"`**
+            2. **ブランチ**は本線を壊さずに作業する枝。**PR** は「入れてください」の依頼
+            3. レビューをもらったら、**同じ枝に push** すれば PR は自動で最新になる
+
+            <span class="sub">🏁 今日 PR を 1 本出せた人は、**講座前半のマイルストーン達成**。</span>
+
+            Note:
+            生徒に言わせる。最低 3 人には声を出させる。「ブランチって何？」「PR って何？」が自分の言葉で言えれば今日は合格。マイルストーン達成をきちんと祝う（前半の山を越えた回なので、達成感を持って帰らせる）。
+          </textarea>
+        </section>
+
+        <!-- 29. 穴埋めクイズ（問題） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## キーワード穴埋めクイズ
+
+            - 他のファイルに部品を貸し出す印は `__________`
+            - 借りてくるのは `__________ { 名前 } from "./logic.js";`
+            - `import` を使うために `<script ______="________">`
+            - `file://` で開くと動かない → `____________` で開く
+            - 新しい枝を作って移動: `git switch ___ feature/...`
+            - 初回の push に付ける印: `git push ___ origin ...`
+            - レビューをもらったら、PR は作り直す？ → `______`
+
+            <span class="sub">先に口頭で当てる。全員答えたらクリックで答え合わせ。</span>
+
+            Note:
+            この時点では答えを見せない。全員に順番で当てて、出揃ってから次スライドへ。間違えても「惜しい」とだけ返してすぐ次へ。最後の 1 問（作り直す？）は今日いちばんの誤解ポイントなので、必ず全員に聞く。
+          </textarea>
+        </section>
+
+        <!-- 30. 穴埋めクイズ（答え合わせ） -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 答え合わせ
+
+            - 貸し出す印は **`export`**
+            - 借りてくるのは **`import`**`{ 名前 } from "./logic.js";`（`./` と `.js` を忘れない）
+            - `<script `**`type="module"`**`>`
+            - `file://` で動かない → **Live Server**（`http://127.0.0.1:5500/...`）
+            - `git switch `**`-c`**` feature/...`（`-c` は **c**reate の c）
+            - `git push `**`-u`**` origin ...`（初回だけ）
+            - PR は **作り直さない**（同じ枝に push すれば自動で最新）
+
+            Note:
+            ここで初めて答えを見せる。生徒用ノートの「7. 今日のまとめ 3 行」と同じ内容。書き取る時間を 1 分とる。ここまで来たら宿題の説明へ。残り 5 分。
+          </textarea>
+        </section>
+
+        <!-- 31. 宿題 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 宿題: 練習3（三択クイズ）を **PR で提出**
+
+            [practice-03-quiz](../practice-03-quiz/) — **モジュール分割込みで作る**のが主眼
+
+            | ファイル | 中身 |
+            |----------|------|
+            | `quiz-data.js` | `questions`（問題文・三択・正解番号）。1 問入っている。あと 2 問足す |
+            | `logic.js` | `judge(question, selectedIndex)` — 正解かを `true` / `false` で返す |
+            | `ui.js` | `showQuestion(question)` / `showResult(isCorrect)` |
+            | `main.js` | 状態（いま何問目か・何問正解か）を持ってつなぐ |
+
+            <span class="sub">テーマは自由（Arduino・部活・ゲーム）。**問題文に個人が特定できることを書かない。**</span>
+
+            Note:
+            練習3 は発展課題＝宿題。授業内で全員に強制しない（講師用チェックリスト）。早く終わった生徒は授業内で着手してよい。judge は if を使わず === の結果をそのまま return すれば 1 行で書ける、とだけヒントを出しておく。
+          </textarea>
+        </section>
+
+        <!-- 32. 宿題の提出方法 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 宿題の出しかた（今日習った手順で）
+
+            ```bash
+            git switch __ feature/lesson-05-03-quiz-xx
+            git ___ .
+            git commit -m "#__ 三択クイズを作った"
+            git push __ origin feature/lesson-05-03-quiz-xx
+            ```
+
+            そのあと GitHub で **PR を作る**（base が `main` か確認 → 説明に Issue 番号）。
+
+            <span class="sub">`xx` は**講師が配った自分の記号**に置き換える（練習2 と同じ。全員が同じ名前だとぶつかる）。</span>
+
+            <span class="sub">**練習2 がマージまで行かなかった人**は、まずそちらのレビュー対応を終わらせてから練習3 へ。</span>
+
+            Note:
+            穴は練習2 と同じ位置。今日 1 周やったので、家でも同じ手順を再現できるはず、と自信を持たせる。次回冒頭で「どんなクイズを作ったか」を 1 分ずつ紹介してもらうと予告する。発表が苦手な子は口頭だけで OK と伝える。
+          </textarea>
+        </section>
+
+        <!-- 33. 次回予告 -->
+        <section data-markdown>
+          <textarea data-template>
+            ## 次回予告（第6回）
+
+            ### Node.js 入門
+
+            - **ブラウザの外**で JavaScript を動かす
+            - Arduino でとったような**センサーのログ（CSV）を集計する**コマンドを作る
+            - 画面が無くても JS は動く。今日の `logic.js` が、まさにその形だった
+
+            <span class="sub">今日やったファイル分割は Node.js でもそのまま効いてくる（むしろそちらが本場）。</span>
+
+            Note:
+            「logic.js には document が無かったから、画面の外でも動く」という今日の伏線を回収する予告。ブラウザ以外でも JS が動くこと自体が中2には驚きなので、そこを引きにする。
+          </textarea>
+        </section>
+
+        <!-- 34. おつかれさま -->
+        <section data-markdown>
+          <textarea data-template>
+            ## おつかれさまでした 🏁
+
+            - ハブ: [lesson-05 トップ](../)
+            - 練習1: [practice-01-modules](../practice-01-modules/)
+            - 練習2: [practice-02-branch-pr](../practice-02-branch-pr/)（今日の本命）
+            - 練習3: [practice-03-quiz](../practice-03-quiz/)（発展 / 宿題）
+            - まとめ: [student-note.md](../student-note.md)
+
+            <span class="spacer"></span>
+
+            **前半の山を越えました。次回も元気で会いましょう！**
+
+            Note:
+            全員が PR を出せたかを最後にもう一度数える。出せなかった生徒がいれば、次回冒頭 15 分でフォローする段取りをその場で決める。残っている PR のレビュー対応・マージは次回までに講師が済ませる。main と answer/* を消さないことを最後にもう一度注意喚起。
+          </textarea>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Reveal.js core + plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: true,
+        width: 1280,
+        height: 720,
+        margin: 0.06,
+        controls: true,
+        progress: true,
+        center: false,
+        transition: "slide",
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>

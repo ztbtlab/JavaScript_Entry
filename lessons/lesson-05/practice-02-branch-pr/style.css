@@ -1,0 +1,77 @@
+/* 練習2 の見た目。ここは触らなくてよい（色は CSS 変数でまとめてある） */
+:root {
+  --bg: #f7f7f7;
+  --panel: #fff;
+  --ink: #222;
+  --accent: #2b6cb0;
+  --accent-weak: #eef2f7;
+  --warn-bg: #fff4e5;
+  --warn-ink: #8a5a00;
+  --radius: 8px;
+}
+
+body {
+  font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  padding: 2rem 1rem;
+  line-height: 1.7;
+}
+
+main {
+  max-width: 620px;
+  margin: 0 auto;
+  background: var(--panel);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  background: var(--accent-weak);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.note {
+  background: var(--accent-weak);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.warn {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+/* 「好きなもの」の表示カード */
+.card {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent);
+  display: block;
+  line-height: 1.4;
+  word-break: break-word;
+}
